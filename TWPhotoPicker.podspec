@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.requires_arc = true
 
-  s.source_files  = "TWPhotoPicker/*.{h,m}","TWPhotoPicker/*/*",,"TWPhotoPicker/*/*/*{h,m}"
+  s.source_files  = "TWPhotoPicker/*"
   s.frameworks = "Foundation", "CoreGraphics", "UIKit"
   s.resources = 'TWPhotoPicker/Resources/*','TWPhotoPicker/instagramFilter/filterIcon/*',
   'TWPhotoPicker/instagramFilter/Resources_for_IF_Filters/*'

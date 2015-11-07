@@ -130,6 +130,7 @@
 		E01351051BEE671B002003EB /* normal.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = normal.jpg; sourceTree = "<group>"; };
 		E01351061BEE671B002003EB /* toaster.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = toaster.jpg; sourceTree = "<group>"; };
 		E01351071BEE671B002003EB /* xproii.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = xproii.jpg; sourceTree = "<group>"; };
+		E01351181BEE70D1002003EB /* select_photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = select_photo_icon.png; sourceTree = "<group>"; };
 		E074655B1BEDA27B00869FB8 /* TWPhotoFilterCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWPhotoFilterCollectionViewCell.h; sourceTree = "<group>"; };
 		E074655C1BEDA27B00869FB8 /* TWPhotoFilterCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWPhotoFilterCollectionViewCell.m; sourceTree = "<group>"; };
 		E07465601BEDAF8F00869FB8 /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLProgram.h; sourceTree = "<group>"; };
@@ -306,6 +307,7 @@
 		1708DCD6CD161F65F2A70D7B83A2E39B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E01351181BEE70D1002003EB /* select_photo_icon.png */,
 				41AE4752BDFC32ACD7A4859EB5AB5ECF /* back@2x.png */,
 				837B2315EAE656186291A9A93B8962D6 /* back@3x.png */,
 				1716B66801B24C5A71778C2B08B384F8 /* cameraroll-picker-grip@2x.png */,

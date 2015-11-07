@@ -93,6 +93,7 @@
     [self.imageScrollView displayImage:photo.originalImage];
     self.currentType  = 0;
     [self.imageScrollView.videoCamera switchFilter:self.currentType];
+    [self.collectionView reloadData];
 }
 
 
@@ -113,7 +114,13 @@
     } else {
         self.currentIndex++;
         [self loadCurrentImage];
-        
+        NSString *title = @"下一张";
+        if (self.currentIndex == self.list.count-1) {
+            title = @"完成";
+        }
+        if (self.list.count > 1) {
+        }
+        [self.nextOrSubmitButton setTitle:title forState:UIControlStateNormal];
     }
     
 }
@@ -150,7 +157,12 @@
         
         rect = CGRectMake(SCREEN_WIDTH-80, 0, 80, CGRectGetHeight(navView.bounds));
         self.nextOrSubmitButton = [[UIButton alloc] initWithFrame:rect];
-        [self.nextOrSubmitButton setTitle:@"OK" forState:UIControlStateNormal];
+        NSString *title = @"完成";
+        if (self.list.count > 1) {
+            title = @"下一张";
+        }
+        [self.nextOrSubmitButton setTitle:title forState:UIControlStateNormal];
+
         [self.nextOrSubmitButton.titleLabel setFont:[UIFont systemFontOfSize:14.0f]];
         [self.nextOrSubmitButton setTitleColor:[UIColor cyanColor] forState:UIControlStateNormal];
         [self.nextOrSubmitButton addTarget:self action:@selector(nextOrSubmitAction) forControlEvents:UIControlEventTouchUpInside];

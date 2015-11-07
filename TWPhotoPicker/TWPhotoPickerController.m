@@ -35,6 +35,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.navigationController setNavigationBarHidden:YES];
     [self.view setBackgroundColor:[UIColor blackColor]];
     [self.view addSubview:self.topView];
     [self.view insertSubview:self.collectionView belowSubview:self.topView];

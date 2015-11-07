@@ -32,6 +32,7 @@
 @implementation TWPhotoEditorViewController
 - (id)initWithPhotoList:(NSArray *)list crop:(cropBlock)crop {
     self              = [super init];
+
     self.currentType  = 0;
     self.cropBlock    = crop;
     self.list         = [list mutableCopy];
@@ -50,6 +51,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.navigationController setNavigationBarHidden:YES];
     [self.view addSubview:self.topView];
     [self.view insertSubview:self.collectionView belowSubview:self.topView];
     [self loadCurrentImage];

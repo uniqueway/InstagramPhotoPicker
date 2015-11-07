@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "IFVideoCamera.h"
+
 
 @interface TWImageScrollView : UIScrollView
-
+@property (strong, nonatomic) IFVideoCamera *videoCamera;
 - (void)displayImage:(UIImage *)image;
 
 - (UIImage *)capture;

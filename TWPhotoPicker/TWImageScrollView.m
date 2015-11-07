@@ -7,13 +7,15 @@
 //
 
 #import "TWImageScrollView.h"
+#import "IFVideoCamera.h"
 #define rad(angle) ((angle) / 180.0 * M_PI)
 
-@interface TWImageScrollView ()<UIScrollViewDelegate>
+@interface TWImageScrollView ()<UIScrollViewDelegate,IFVideoCameraDelegate>
 {
     CGSize _imageSize;
 }
-@property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) GPUImageView *imageView;
+
 @end
 
 @implementation TWImageScrollView
@@ -29,6 +31,9 @@
         self.bouncesZoom = YES;
         self.decelerationRate = UIScrollViewDecelerationRateFast;
         self.delegate = self;
+        
+        self.videoCamera = [[IFVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPresetPhoto cameraPosition:AVCaptureDevicePositionBack highVideoQuality:YES];
+        
     }
     return self;
 }
@@ -65,11 +70,13 @@
 {
 
     CGRect visibleRect = [self _calcVisibleRectForCropArea];//caculate visible rect for crop
-    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:self.imageView.image];//if need rotate caculate
+    
+    UIImage *image =[self.videoCamera getCurrentImage];
+    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
     visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
 
-    CGImageRef ref = CGImageCreateWithImageInRect([self.imageView.image CGImage], visibleRect);//crop
-    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:self.imageView.image.scale orientation:self.imageView.image.imageOrientation] ;
+    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
     CGImageRelease(ref);
     ref = NULL;
     return cropped;
@@ -83,8 +90,9 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 
 
 -(CGRect)_calcVisibleRectForCropArea{
+    UIImage *image =[self.videoCamera getCurrentImage];
 
-    CGFloat sizeScale = self.imageView.image.size.width / self.imageView.frame.size.width;
+    CGFloat sizeScale = image.size.width / self.imageView.frame.size.width;
     sizeScale *= self.zoomScale;
     CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
     return visibleRect = TWScaleRect(visibleRect, sizeScale);
@@ -116,15 +124,12 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 {
     // clear the previous image
     [self.imageView removeFromSuperview];
-    self.imageView = nil;
-    
+    [self.videoCamera cancelAlbumPhotoAndGoBackToNormal];
+    self.videoCamera.rawImage = image;
+    self.videoCamera.delegate = self;
+
     // reset our zoomScale to 1.0 before doing any further calculations
     self.zoomScale = 1.0;
-    
-    // make a new UIImageView for the new image
-    self.imageView = [[UIImageView alloc] initWithImage:image];
-    self.imageView.clipsToBounds = NO;
-    [self addSubview:self.imageView];
     
     CGRect frame = self.imageView.frame;
     if (image.size.height > image.size.width) {
@@ -134,7 +139,12 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
         frame.size.height = self.bounds.size.height;
         frame.size.width = (self.bounds.size.height / image.size.height) * image.size.width;
     }
+    [self.videoCamera resetSize:frame.size];
+    self.imageView = self.videoCamera.gpuImageView;
     self.imageView.frame = frame;
+    self.imageView.clipsToBounds = NO;
+    self.imageView.backgroundColor = [UIColor whiteColor];
+    [self addSubview:self.imageView];
     [self configureForImageSize:self.imageView.bounds.size];
 }
 
@@ -165,6 +175,32 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     return self.imageView;
+}
+
+#pragma mark - IFVideoCameraDelegate
+
+- (void)IFVideoCameraWillStartCaptureStillImage:(IFVideoCamera *)videoCamera {
+    
+}
+
+- (void)IFVideoCameraDidFinishCaptureStillImage:(IFVideoCamera *)videoCamera {
+    
+}
+
+- (void)IFVideoCameraDidSaveStillImage:(IFVideoCamera *)videoCamera {
+    
+}
+
+- (BOOL)canIFVideoCameraStartRecordingMovie:(IFVideoCamera *)videoCamera {
+    return NO;
+}
+
+- (void)IFVideoCameraWillStartProcessingMovie:(IFVideoCamera *)videoCamera {
+    
+}
+
+- (void)IFVideoCameraDidFinishProcessingMovie:(IFVideoCamera *)videoCamera {
+    
 }
 
 @end

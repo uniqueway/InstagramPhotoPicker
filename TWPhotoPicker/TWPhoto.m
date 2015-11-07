@@ -15,9 +15,11 @@
 }
 
 - (UIImage *)originalImage {
-    return [UIImage imageWithCGImage:self.asset.defaultRepresentation.fullResolutionImage
-                               scale:self.asset.defaultRepresentation.scale
-                         orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];
+    if (_originalImage) {
+        _originalImage = [UIImage imageWithCGImage:self.asset.defaultRepresentation.fullResolutionImage
+                                             scale:self.asset.defaultRepresentation.scale
+                                       orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];
+    }
+    return _originalImage;
 }
-
 @end

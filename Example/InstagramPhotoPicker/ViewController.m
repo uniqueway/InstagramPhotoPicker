@@ -22,12 +22,15 @@
         TWPhotoPickerController *photoPicker = [[TWPhotoPickerController alloc] init];
 
         photoPicker.cropBlock = ^(NSArray *list) {
-            CGFloat size = 50;
+            CGFloat size = 200;
             NSInteger index = 0;
+            CGFloat y = 50;
             for (UIImage *image in list) {
-                UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(0, index*size, size, size)];
+                CGFloat height = (size/image.size.width)*image.size.height;
+                UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(50, y, size, height)];
                 imageview.image = image;
                 [self.view addSubview:imageview];
+                y+=height+30;
                 index++;
             }
 

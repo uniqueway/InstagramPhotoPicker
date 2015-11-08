@@ -15,7 +15,7 @@
 }
 
 - (UIImage *)originalImage {
-    if (_originalImage) {
+    if (!_originalImage) {
         _originalImage = [UIImage imageWithCGImage:self.asset.defaultRepresentation.fullResolutionImage
                                              scale:self.asset.defaultRepresentation.scale
                                        orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];

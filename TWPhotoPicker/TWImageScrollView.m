@@ -69,21 +69,35 @@
 - (UIImage *)capture
 {
     UIImage *image = [self.videoCamera getCurrentImage];
-    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
-
-    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
-    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
+//    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
+//
 //    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
 //    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
+//
+//    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
+//    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
+//    CGImageRelease(ref);
+//    ref = NULL;
+//    return cropped;
+    return image;
 
-    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
-    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
-    CGImageRelease(ref);
-    ref = NULL;
-    return cropped;
-//    return [self.videoCamera getCurrentImage];
+    
+//    UIImage *image = [self.videoCamera getCurrentImage];
+//    CGFloat sizeScale = image.size.width / self.frame.size.width;
+//    UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, sizeScale);
+//    [self.imageView drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
+//    UIImage * snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    return snapshotImage;
+
+//    
+//    UIGraphicsBeginImageContext(self.frame.size);
+//    [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    UIImage *vwImage = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    return vwImage;
+//}
 }
-
 
 static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 {
@@ -125,27 +139,39 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     // clear the previous image
     [self.imageView removeFromSuperview];
     [self.videoCamera cancelAlbumPhotoAndGoBackToNormal];
-    self.videoCamera.rawImage = image;
-    self.videoCamera.delegate = self;
-
     // reset our zoomScale to 1.0 before doing any further calculations
     self.zoomScale = 1.0;
     
     CGRect frame = self.imageView.frame;
+    CGFloat size = 0;
     if (image.size.height > image.size.width) {
         frame.size.width = self.bounds.size.width;
         frame.size.height = (self.bounds.size.width / image.size.width) * image.size.height;
+        size = image.size.width;
     } else {
         frame.size.height = self.bounds.size.height;
         frame.size.width = (self.bounds.size.height / image.size.height) * image.size.width;
+        size = image.size.height;
     }
+    
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     frame = CGRectMake(0, 0, width, width);
+    
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], CGRectMake((image.size.width-size)/2, (image.size.height-size)/2, size, size));
+    image = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    
+    self.videoCamera.rawImage = image;
+    self.videoCamera.delegate = self;
+
+    
+    
     [self.videoCamera resetSize:frame.size];
     self.imageView = self.videoCamera.gpuImageView;
     self.imageView.frame = frame;
     self.imageView.clipsToBounds = NO;
 //    self.imageView.backgroundColor = [UIColor whiteColor];
+    
     [self addSubview:self.imageView];
     [self configureForImageSize:self.imageView.bounds.size];
 }

@@ -960,6 +960,7 @@
     self.gpuImageView.layer.contentsScale = 2.0f;
     [self.filter addTarget:gpuImageView];
     self.gpuImageView_HD.frame = [self.gpuImageView bounds];
+    self.gpuImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.gpuImageView_HD.hidden = NO;
 
 }

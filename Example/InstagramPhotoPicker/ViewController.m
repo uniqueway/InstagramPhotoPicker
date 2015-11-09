@@ -22,24 +22,24 @@
     [self.view addSubview:v];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         TWPhotoPickerController *photoPicker = [[TWPhotoPickerController alloc] init];
-
         photoPicker.cropBlock = ^(NSArray *list) {
-            CGFloat size = [[UIScreen mainScreen] bounds].size.width;
+//            CGFloat size = [[UIScreen mainScreen] bounds].size.width;
             NSInteger index = 0;
             CGFloat y = 50;
-            CGFloat width = 0;
+            CGFloat _width = 0;
             for (UIImage *image in list) {
-                CGFloat height = size/image.size.width * image.size.height;
-                UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(0, y, size, height)];
+                CGFloat width = image.size.width;
+                CGFloat height = image.size.height;
+                UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(0, y, width, height)];
                 imageview.image = image;
                 [v addSubview:imageview];
                 y+=height+30;
-                if (image.size.width > width) {
-                    width = image.size.width;
+                if (image.size.width > _width) {
+                    _width = image.size.width;
                 }
                 index++;
             }
-            v.contentSize = (CGSize){width,y};
+            v.contentSize = (CGSize){_width+1,y};
         };
         
         UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:photoPicker];

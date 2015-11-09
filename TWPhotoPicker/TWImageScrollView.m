@@ -68,17 +68,18 @@
  */
 - (UIImage *)capture
 {
-//    UIImage *image = [self.videoCamera getCurrentImage];
-//    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
-//
-//    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
-//    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
-//
-//    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
-//    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
-//    CGImageRelease(ref);
-//    ref = NULL;
-    return [self.videoCamera getCurrentImage];
+    UIImage *image = [self.videoCamera getCurrentImage];
+    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
+
+    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
+    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
+
+    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
+    CGImageRelease(ref);
+    ref = NULL;
+    return cropped;
+//    return [self.videoCamera getCurrentImage];
 }
 
 
@@ -136,6 +137,8 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
         frame.size.height = self.bounds.size.height;
         frame.size.width = (self.bounds.size.height / image.size.height) * image.size.width;
     }
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    frame = CGRectMake(0, 0, width, width);
     [self.videoCamera resetSize:frame.size];
     self.imageView = self.videoCamera.gpuImageView;
     self.imageView.frame = frame;

@@ -17,11 +17,18 @@
     "ios": "7.0"
   },
   "requires_arc": true,
-  "source_files": "TWPhotoPicker/*.{h,m}",
+  "source_files": [
+    "TWPhotoPicker/*",
+    "TWPhotoPicker/instagramFilter/*/*.{h,m}"
+  ],
   "frameworks": [
     "Foundation",
     "CoreGraphics",
     "UIKit"
   ],
-  "resources": "TWPhotoPicker/Resources/*"
+  "resources": [
+    "TWPhotoPicker/Resources/*",
+    "TWPhotoPicker/instagramFilter/filterIcon/*",
+    "TWPhotoPicker/instagramFilter/Resources_for_IF_Filters/*"
+  ]
 }

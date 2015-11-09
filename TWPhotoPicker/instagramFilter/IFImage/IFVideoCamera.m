@@ -27,7 +27,6 @@
 @property (strong, readwrite) GPUImageView *gpuImageView;
 @property (strong, readwrite) GPUImageView *gpuImageView_HD;
 
-@property (nonatomic, strong) IFRotationFilter *rotationFilter;
 @property (nonatomic, unsafe_unretained) IFFilterType currentFilterType;
 
 //@property (nonatomic, unsafe_unretained) dispatch_queue_t prepareFilterQueue;
@@ -79,7 +78,6 @@
 
 @synthesize gpuImageView;
 @synthesize gpuImageView_HD;
-@synthesize rotationFilter;
 @synthesize currentFilterType;
 //@synthesize prepareFilterQueue;
 @synthesize rawImage;
@@ -97,7 +95,7 @@
 
 
 - (UIImage *)getCurrentImage {
-    return [[self.filter imageFromCurrentlyProcessedOutput] imageRotatedByDegrees:0];
+    return [[self.filter imageFromCurrentFramebuffer] imageRotatedByDegrees:0];
 }
 #pragma mark - Save current image
 - (void)saveCurrentStillImage {
@@ -105,7 +103,7 @@
         return;
     }
     // If without the rorating 0 degree action, the image will be left hand 90 degrees rorated.
-    UIImageWriteToSavedPhotosAlbum([[self.filter imageFromCurrentlyProcessedOutput] imageRotatedByDegrees:0], self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    UIImageWriteToSavedPhotosAlbum([[self.filter imageFromCurrentFramebuffer] imageRotatedByDegrees:0], self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 
 
@@ -480,7 +478,7 @@
      [self.stillImageSource removeTarget:self.filter];
      */
     
-    [self.rotationFilter addTarget:self.filter];
+//    [self.rotationFilter addTarget:self.filter];
     
     self.stillImageSource = nil;
     self.rawImage = nil;
@@ -496,9 +494,9 @@
 - (void)switchToNewFilter {
     
     if (self.stillImageSource == nil) {
-        [self.rotationFilter removeTarget:self.filter];
+//        [self.rotationFilter removeTarget:self.filter];
         self.filter = self.internalFilter;
-        [self.rotationFilter addTarget:self.filter];
+//        [self.rotationFilter addTarget:self.filter];
     } else {
         [self.stillImageSource removeTarget:self.filter];
         self.filter = self.internalFilter;
@@ -910,7 +908,7 @@
     if ((self.rawImage != nil) && (self.stillImageSource == nil)) {
         
         // This is the state when we just switched from live view to album photo view
-        [self.rotationFilter removeTarget:self.filter];
+//        [self.rotationFilter removeTarget:self.filter];
         self.stillImageSource = [[GPUImagePicture alloc] initWithImage:self.rawImage];
         [self.stillImageSource addTarget:self.filter];
     } else {
@@ -938,13 +936,13 @@
     
 //    prepareFilterQueue = dispatch_queue_create("com.diwublog.prepareFilterQueue", NULL);
     
-    rotationFilter = [[IFRotationFilter alloc] initWithRotation:kGPUImageRotateRight];
-    [self addTarget:rotationFilter];
+//    rotationFilter = [[IFRotationFilter alloc] initWithRotation:kGPUImageRotateRight];
+//    [self addTarget:rotationFilter];
     
     self.filter = [[IFNormalFilter alloc] init];
     self.internalFilter = self.filter;
     
-    [rotationFilter addTarget:filter];
+//    [rotationFilter addTarget:filter];
 //    CGFloat width = [UIScreen mainScreen].bounds.size.width;
     
     return self;

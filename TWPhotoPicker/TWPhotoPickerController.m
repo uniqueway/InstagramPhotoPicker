@@ -9,7 +9,6 @@
 #import "TWPhotoPickerController.h"
 #import "TWPhotoEditorViewController.h"
 #import "TWPhotoCollectionViewCell.h"
-#import "TWImageScrollView.h"
 #import "TWPhotoLoader.h"
 #import "SVProgressHUD.h"
 
@@ -21,7 +20,6 @@
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UIImageView *maskView;
 @property (strong, nonatomic) UICollectionView *collectionView;
-@property (strong, nonatomic) TWImageScrollView *imageScrollView;
 @property (strong, nonatomic) NSMutableArray *imageDidSelectList;
 @property (strong, nonatomic) NSMutableArray *indexPathList;
 @property (strong, nonatomic) UIButton *cropBtn;
@@ -44,9 +42,9 @@
     [self loadPhotos];
 }
 
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//    return UIStatusBarStyleLightContent;
-//}
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
 
 - (void)toggleIndex:(NSIndexPath *)indexPath {
@@ -116,10 +114,6 @@
     [TWPhotoLoader loadAllPhotos:^(NSArray *photos, NSError *error) {
         if (!error) {
             self.allPhotos = [NSArray arrayWithArray:photos];
-            if (self.allPhotos.count) {
-                TWPhoto *firstPhoto = [self.allPhotos objectAtIndex:0];
-                [self.imageScrollView displayImage:firstPhoto.originalImage];
-            }
             [self.collectionView reloadData];
         } else {
             NSLog(@"Load Photos Error: %@", error);

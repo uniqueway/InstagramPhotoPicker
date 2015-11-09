@@ -73,6 +73,8 @@
 
     CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
     visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
+//    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
+//    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
 
     CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
     UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
@@ -91,7 +93,7 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 
 -(CGRect)_calcVisibleRectForCropArea:(CGSize)size {
     CGFloat sizeScale = size.width / self.frame.size.width;
-    sizeScale *= self.zoomScale;
+//    sizeScale *= self.zoomScale;
     CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
     return visibleRect = TWScaleRect(visibleRect, sizeScale);
 }
@@ -143,7 +145,7 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     self.imageView = self.videoCamera.gpuImageView;
     self.imageView.frame = frame;
     self.imageView.clipsToBounds = NO;
-    self.imageView.backgroundColor = [UIColor whiteColor];
+//    self.imageView.backgroundColor = [UIColor whiteColor];
     [self addSubview:self.imageView];
     [self configureForImageSize:self.imageView.bounds.size];
 }
@@ -152,12 +154,12 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 {
     _imageSize = imageSize;
     self.contentSize = imageSize;
-    
+    CGSize size = self.bounds.size;
     //to center
     if (imageSize.width > imageSize.height) {
-        self.contentOffset = CGPointMake(imageSize.width/4, 0);
+        self.contentOffset = CGPointMake((imageSize.width-size.width)/2, 0);
     } else if (imageSize.width < imageSize.height) {
-        self.contentOffset = CGPointMake(0, imageSize.height/4);
+        self.contentOffset = CGPointMake(0, (imageSize.height-size.height)/2);
     }
     
     [self setMaxMinZoomScalesForCurrentBounds];

@@ -28,7 +28,7 @@
 		return nil;
     }
     
-    [GPUImageContext useImageProcessingContext];
+    [GPUImageOpenGLESContext useImageProcessingContext];
     filterProgram = [[GLProgram alloc] initWithVertexShaderString:kGPUImageVertexShaderString fragmentShaderString:fragmentShaderString];
     
     [filterProgram addAttribute:@"position"];
@@ -65,7 +65,7 @@
 
 - (void)renderToTextureWithVertices:(const GLfloat *)vertices textureCoordinates:(const GLfloat *)textureCoordinates;
 {
-    [GPUImageContext useImageProcessingContext];
+    [GPUImageOpenGLESContext useImageProcessingContext];
     [self setFilterFBO];
     
     [filterProgram use];
@@ -74,22 +74,17 @@
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
 	glActiveTexture(GL_TEXTURE2);
-    GLuint currentTexture = [firstInputFramebuffer texture];
-	glBindTexture(GL_TEXTURE_2D, currentTexture);
+	glBindTexture(GL_TEXTURE_2D, filterSourceTexture);
     
 	glUniform1i(filterInputTextureUniform, 2);	
     
-//    if (filterSourceTexture3) {
-//        <#statements#>
-//    }
-    
-//    if (filterSourceTexture2 != 0)
-//    {
-//        glActiveTexture(GL_TEXTURE3);
-//        glBindTexture(GL_TEXTURE_2D, 0);
-//        
-//        glUniform1i(filterInputTextureUniform2, 3);	
-//    }
+    if (filterSourceTexture2 != 0)
+    {
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, filterSourceTexture2);
+        
+        glUniform1i(filterInputTextureUniform2, 3);	
+    }
     if (filterSourceTexture3 != 0)
     {
         glActiveTexture(GL_TEXTURE4);
@@ -119,13 +114,11 @@
 	glVertexAttribPointer(filterTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
+    
     for (id<GPUImageInput> currentTarget in targets)
     {
-        NSInteger index = [targets indexOfObject:currentTarget];
-        NSInteger textureIndex = [[targetTextureIndices objectAtIndex:index] integerValue];
-        [currentTarget setInputSize:inputTextureSize atIndex:textureIndex];
-        [currentTarget newFrameReadyAtTime:kCMTimeInvalid atIndex:textureIndex];
+        [currentTarget setInputSize:inputTextureSize];
+        [currentTarget newFrameReady];
     }
 }
 
@@ -152,9 +145,9 @@
     //    NSLog(@"Filter size: %f, %f", currentFBOSize.width, currentFBOSize.height);
     
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, (int)currentFBOSize.width, (int)currentFBOSize.height);
-    glBindTexture(GL_TEXTURE_2D, [outputFramebuffer texture]);
+    glBindTexture(GL_TEXTURE_2D, outputTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)currentFBOSize.width, (int)currentFBOSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputFramebuffer.texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, 0);
 	
 //	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     
@@ -174,29 +167,29 @@
     }
 }
 
-//- (void)setInputTexture:(GLuint)newInputTexture atIndex:(NSInteger)textureIndex;
-//{
-//    if (textureIndex == 0)
-//    {
-//        filterSourceTexture = newInputTexture;
-//    }
-//    else if (filterSourceTexture2 == 0)
-//    {
-//        filterSourceTexture2 = newInputTexture;
-//    } 
-//    else if (filterSourceTexture3 == 0) {
-//        filterSourceTexture3 = newInputTexture;
-//    }
-//    else if (filterSourceTexture4 == 0) {
-//        filterSourceTexture4 = newInputTexture;
-//    }
-//    else if (filterSourceTexture5 == 0) {
-//        filterSourceTexture5 = newInputTexture;
-//    }
-//    else if (filterSourceTexture6 == 0) {
-//        filterSourceTexture6 = newInputTexture;
-//    }
-//
-//}
+- (void)setInputTexture:(GLuint)newInputTexture atIndex:(NSInteger)textureIndex;
+{
+    if (textureIndex == 0)
+    {
+        filterSourceTexture = newInputTexture;
+    }
+    else if (filterSourceTexture2 == 0)
+    {
+        filterSourceTexture2 = newInputTexture;
+    } 
+    else if (filterSourceTexture3 == 0) {
+        filterSourceTexture3 = newInputTexture;
+    }
+    else if (filterSourceTexture4 == 0) {
+        filterSourceTexture4 = newInputTexture;
+    }
+    else if (filterSourceTexture5 == 0) {
+        filterSourceTexture5 = newInputTexture;
+    }
+    else if (filterSourceTexture6 == 0) {
+        filterSourceTexture6 = newInputTexture;
+    }
+
+}
 
 @end

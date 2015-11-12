@@ -339,8 +339,8 @@
 			buildConfigurationList = 0D758FFE1A2FFFF60040D2AF /* Build configuration list for PBXNativeTarget "InstagramPhotoPicker" */;
 			buildPhases = (
 				0DA35720908D806F52B5B303 /* Check Pods Manifest.lock */,
-				0D758FD71A2FFFF60040D2AF /* Sources */,
 				0D758FD81A2FFFF60040D2AF /* Frameworks */,
+				0D758FD71A2FFFF60040D2AF /* Sources */,
 				0D758FD91A2FFFF60040D2AF /* Resources */,
 				8AA6121B217770F6F06E6DD8 /* Copy Pods Resources */,
 			);

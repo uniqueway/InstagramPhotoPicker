@@ -7,14 +7,30 @@
 //
 
 #import "TWImageScrollView.h"
-#import "IFVideoCamera.h"
+#import <GPUImage/GPUImage.h>
+
 #define rad(angle) ((angle) / 180.0 * M_PI)
 
-@interface TWImageScrollView ()<UIScrollViewDelegate,IFVideoCameraDelegate>
+@interface TWImageScrollView ()<UIScrollViewDelegate>
 {
     CGSize _imageSize;
+    NSInteger currentFilterType;
 }
-@property (strong, nonatomic) GPUImageView *imageView;
+
+@property (strong, nonatomic) GPUImagePicture *picture;
+//@property (strong, nonatomic) GPUImagePicture *originPicture;
+@property (strong, nonatomic) UIImage *currentImage;
+@property (nonatomic, strong) GPUImageFilter *filter;
+@property (nonatomic, strong) GPUImagePicture *sourcePicture1;
+@property (nonatomic, strong) GPUImageGrayscaleFilter *grayFilter;
+@property (nonatomic, strong) GPUImageBrightnessFilter *brightnessFilter;
+@property (nonatomic, strong) GPUImageSaturationFilter *saturationFilter;
+@property (nonatomic, strong) GPUImageWhiteBalanceFilter *whiteBalanceFilter;
+@property (nonatomic, strong) GPUImageSharpenFilter *sharpenFilter;
+@property (nonatomic, strong) GPUImageContrastFilter *contrastFilter;
+
+
+@property (strong, nonatomic) UIImageView *imageView;
 
 @end
 
@@ -31,9 +47,6 @@
         self.bouncesZoom = YES;
         self.decelerationRate = UIScrollViewDecelerationRateFast;
         self.delegate = self;
-        
-        self.videoCamera = [[IFVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPresetPhoto cameraPosition:AVCaptureDevicePositionBack highVideoQuality:YES];
-        
     }
     return self;
 }
@@ -66,37 +79,18 @@
  *
  *  @return image cropped
  */
-- (UIImage *)capture
-{
-    UIImage *image = [self.videoCamera getCurrentImage];
-//    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
-//
+- (UIImage *)capture {
+    UIImage *image = [self.imageView image];
+    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
+
 //    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
 //    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
-//
-//    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
-//    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
-//    CGImageRelease(ref);
-//    ref = NULL;
-//    return cropped;
-    return image;
 
-    
-//    UIImage *image = [self.videoCamera getCurrentImage];
-//    CGFloat sizeScale = image.size.width / self.frame.size.width;
-//    UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, sizeScale);
-//    [self.imageView drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
-//    UIImage * snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
-//    UIGraphicsEndImageContext();
-//    return snapshotImage;
-
-//    
-//    UIGraphicsBeginImageContext(self.frame.size);
-//    [self.layer renderInContext:UIGraphicsGetCurrentContext()];
-//    UIImage *vwImage = UIGraphicsGetImageFromCurrentImageContext();
-//    UIGraphicsEndImageContext();
-//    return vwImage;
-//}
+    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
+    CGImageRelease(ref);
+    ref = NULL;
+    return cropped;
 }
 
 static CGRect TWScaleRect(CGRect rect, CGFloat scale)
@@ -105,9 +99,14 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 }
 
 
--(CGRect)_calcVisibleRectForCropArea:(CGSize)size {
-    CGFloat sizeScale = size.width / self.frame.size.width;
-//    sizeScale *= self.zoomScale;
+- (CGRect)_calcVisibleRectForCropArea:(CGSize)size {
+    CGFloat sizeScale = 1;
+    if (size.height > size.width) {
+        sizeScale = size.width / self.frame.size.width;
+    } else {
+        sizeScale = size.height / self.frame.size.height;
+    }
+    
     CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
     return visibleRect = TWScaleRect(visibleRect, sizeScale);
 }
@@ -133,63 +132,146 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     return CGAffineTransformScale(rectTransform, img.scale, img.scale);
 }
 
+#pragma mark - Switch Filter
 
-- (void)displayImage:(UIImage *)image
-{
-    // clear the previous image
-    [self.imageView removeFromSuperview];
-    [self.videoCamera cancelAlbumPhotoAndGoBackToNormal];
-    // reset our zoomScale to 1.0 before doing any further calculations
-    self.zoomScale = 1.0;
+- (void)forceSwitchToNewFilter:(NSInteger)type {
+    currentFilterType = type;
+    self.filter       = nil;
+    if (self.picture == nil) {
+        self.picture = [[GPUImagePicture alloc] initWithImage:self.imageView.image];
+    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.picture removeAllTargets];
+        switch (type) {
+            case 0: {
+                break;
+            }
+                
+            case 1: {
+                self.saturationFilter.saturation    = 1.01;
+                self.sharpenFilter.sharpness        = 0.1;
+                self.contrastFilter.contrast        = 1.5;
+                self.whiteBalanceFilter.temperature = 5000;
+                self.brightnessFilter.brightness    = 0.0f;
+                self.filter = self.grayFilter;
+                [self addFilters];
+                break;
+            }
+            case 2: {
+                self.saturationFilter.saturation    = 1.28635494736842;
+                self.sharpenFilter.sharpness        = 0;
+                self.contrastFilter.contrast        = 1.2;
+                self.whiteBalanceFilter.temperature = 5100;
+                self.brightnessFilter.brightness    = 0.02f;
+                [self addFilters];
+                break;
+            }
+                
+            case 3: {
+                self.saturationFilter.saturation    = 1;
+                self.sharpenFilter.sharpness        = 0;
+                self.contrastFilter.contrast        = 1.3;
+                self.whiteBalanceFilter.temperature = 4100;
+                self.brightnessFilter.brightness    = 0.005f;
+                [self addFilters];
+                
+                break;
+            }
+                
+            case 4: {
+                self.saturationFilter.saturation    = 1.3;
+                self.sharpenFilter.sharpness        = 0;
+                self.contrastFilter.contrast        = 1.7;
+                self.whiteBalanceFilter.temperature = 5300;
+                self.brightnessFilter.brightness    = -0.03f;
+                [self addFilters];
+                break;
+            }
+                
+            default:
+                break;
+        }
+        [self.picture processImage];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIImage *image = nil;
+            if (self.filter) {
+                image = [self.filter imageFromCurrentFramebufferWithOrientation:self.imageView.image.imageOrientation];
+            } else {
+                image = self.currentImage;
+            }
+            self.imageView.image = image;
+        });
+    });
+}
+
+- (void)addFilters {
+    if (!self.filter) {
+        self.filter = [[GPUImageFilter alloc] init];
+    }
+    [self.picture addTarget:self.saturationFilter];
+    [self.saturationFilter addTarget:self.sharpenFilter];
+    [self.sharpenFilter addTarget:self.contrastFilter];
+    [self.contrastFilter addTarget:self.whiteBalanceFilter];
+    [self.whiteBalanceFilter addTarget:self.brightnessFilter];
+    [self.brightnessFilter addTarget:self.filter];
+    [self.filter useNextFrameForImageCapture];
+}
+
+- (void)switchFilter:(NSInteger)type {
     
-    CGRect frame = self.imageView.frame;
-    CGFloat size = 0;
-    if (image.size.height > image.size.width) {
-        frame.size.width = self.bounds.size.width;
-        frame.size.height = (self.bounds.size.width / image.size.width) * image.size.height;
-        size = image.size.width;
+    if ((self.imageView.image != nil) && (self.picture == nil)) {
+        self.picture = [[GPUImagePicture alloc] initWithImage:self.imageView.image];
     } else {
-        frame.size.height = self.bounds.size.height;
-        frame.size.width = (self.bounds.size.height / image.size.height) * image.size.width;
-        size = image.size.height;
+        if (currentFilterType == type) {
+            return;
+        }
+    }
+    [self forceSwitchToNewFilter:type];
+    
+}
+
+
+- (void)displayImage:(UIImage *)image {
+    self.currentImage = image;
+    if (!self.imageView) {
+        self.imageView = [[UIImageView alloc] init];
+        [self addSubview:self.imageView];
+    }
+    CGSize size    = self.bounds.size;
+    CGFloat width  = 0;
+    CGFloat height = 0;
+    CGFloat x      = 0;
+    CGFloat y      = 0;
+    if (image.size.height > image.size.width) {
+        width  = size.width;
+        height = (size.width / image.size.width) * image.size.height;
+    } else {
+        height = size.height;
+        width  = (size.height / image.size.height) * image.size.width;
     }
     
-    CGFloat width = [UIScreen mainScreen].bounds.size.width;
-    frame = CGRectMake(0, 0, width, width);
-    
-    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], CGRectMake((image.size.width-size)/2, (image.size.height-size)/2, size, size));
-    image = [UIImage imageWithCGImage:imageRef];
-    CGImageRelease(imageRef);
-    
-    self.videoCamera.rawImage = image;
-    self.videoCamera.delegate = self;
-
-    
-    
-    [self.videoCamera resetSize:frame.size];
-    self.imageView = self.videoCamera.gpuImageView;
+    self.picture         = [[GPUImagePicture alloc] initWithImage:image];
+    self.imageView.image = image;
+    CGRect frame         = CGRectMake(x, y, width, height);
+    [self configureForImageSize:frame.size];
+    self.contentSize = CGSizeMake(width, height);
     self.imageView.frame = frame;
-    self.imageView.clipsToBounds = NO;
-//    self.imageView.backgroundColor = [UIColor whiteColor];
-    
-    [self addSubview:self.imageView];
-    [self configureForImageSize:self.imageView.bounds.size];
+
+    //    [self switchFilter:IF_NORMAL_FILTER];
 }
 
 - (void)configureForImageSize:(CGSize)imageSize
 {
-    _imageSize = imageSize;
-    self.contentSize = imageSize;
+//    _imageSize = imageSize;
     CGSize size = self.bounds.size;
-    //to center
     if (imageSize.width > imageSize.height) {
         self.contentOffset = CGPointMake((imageSize.width-size.width)/2, 0);
     } else if (imageSize.width < imageSize.height) {
         self.contentOffset = CGPointMake(0, (imageSize.height-size.height)/2);
     }
-    
     [self setMaxMinZoomScalesForCurrentBounds];
     self.zoomScale = self.minimumZoomScale;
+
 }
 
 - (void)setMaxMinZoomScalesForCurrentBounds
@@ -205,30 +287,54 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     return self.imageView;
 }
 
-#pragma mark - IFVideoCameraDelegate
 
-- (void)IFVideoCameraWillStartCaptureStillImage:(IFVideoCamera *)videoCamera {
-    
+#pragma mark - getters and setters
+- (GPUImageBrightnessFilter *)brightnessFilter
+{
+    if (_brightnessFilter == nil) {
+        _brightnessFilter = [[GPUImageBrightnessFilter alloc] init];
+    }
+    return _brightnessFilter;
 }
 
-- (void)IFVideoCameraDidFinishCaptureStillImage:(IFVideoCamera *)videoCamera {
-    
+- (GPUImageSaturationFilter *)saturationFilter
+{
+    if (_saturationFilter == nil) {
+        _saturationFilter = [[GPUImageSaturationFilter alloc] init];
+    }
+    return _saturationFilter;
 }
 
-- (void)IFVideoCameraDidSaveStillImage:(IFVideoCamera *)videoCamera {
-    
+- (GPUImageWhiteBalanceFilter *)whiteBalanceFilter
+{
+    if (_whiteBalanceFilter == nil) {
+        _whiteBalanceFilter = [[GPUImageWhiteBalanceFilter alloc] init];
+    }
+    return _whiteBalanceFilter;
 }
 
-- (BOOL)canIFVideoCameraStartRecordingMovie:(IFVideoCamera *)videoCamera {
-    return NO;
+- (GPUImageSharpenFilter *)sharpenFilter
+{
+    if (_sharpenFilter == nil) {
+        _sharpenFilter = [[GPUImageSharpenFilter alloc] init];
+    }
+    return _sharpenFilter;
 }
 
-- (void)IFVideoCameraWillStartProcessingMovie:(IFVideoCamera *)videoCamera {
-    
+- (GPUImageContrastFilter *)contrastFilter
+{
+    if (_contrastFilter == nil) {
+        _contrastFilter = [[GPUImageContrastFilter alloc] init];
+        _contrastFilter.contrast = 1.0f;
+    }
+    return _contrastFilter;
 }
 
-- (void)IFVideoCameraDidFinishProcessingMovie:(IFVideoCamera *)videoCamera {
-    
+- (GPUImageGrayscaleFilter *)grayFilter {
+    if (_grayFilter == nil) {
+        _grayFilter = [[GPUImageGrayscaleFilter alloc] init];
+    }
+    return _grayFilter;
 }
 
 @end

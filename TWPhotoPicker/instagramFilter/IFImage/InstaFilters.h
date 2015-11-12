@@ -30,9 +30,8 @@ typedef enum {
 
 #import "UIImage+IF.h"
 #import "IFImageFilter.h"
-#import "IFVideoCamera.h"
 #import "IFSutroFilter.h"
-#import "IFRotationFilter.h"
+//#import "IFRotationFilter.h"
 #import "IFAmaroFilter.h"
 #import "IFNormalFilter.h"
 #import "IFRiseFilter.h"

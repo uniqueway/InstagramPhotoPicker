@@ -34,14 +34,6 @@
         self.title.textColor = [UIColor colorWithRed:30/255 green:30/255 blue:30/255 alpha:1];
         self.title.textAlignment = NSTextAlignmentCenter;
         [self.contentView addSubview:self.title];
-        //        UIImage *iconImage = [UIImage imageNamed:@""];
-        //        CGSize size = iconImage.size;
-        //        CGFloat height = size.height;
-        //        CGFloat width  = size.width;
-        //        UIImageView *icon = [[UIImageView alloc] initWithFrame:CGRectMake((frame.size.width-width)/2, (frame.size.height-height)/2, width, height)];
-        //        icon.layer.borderColor = [UIColor blueColor].CGColor;
-        //        [self.coverView addSubview:icon];
-        
     }
     return self;
 }

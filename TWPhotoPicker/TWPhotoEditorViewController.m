@@ -20,7 +20,7 @@
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) TWImageScrollView *imageScrollView;
-@property (nonatomic, assign) IFFilterType currentType;
+@property (nonatomic, assign) NSInteger currentType;
 @property (nonatomic, strong) NSArray *filterList;
 @property (nonatomic, strong) NSArray *filterNameList;
 @property (strong, nonatomic) NSMutableArray *resultList;
@@ -36,7 +36,7 @@
     self.currentType  = 0;
     self.cropBlock    = crop;
     self.list         = [list mutableCopy];
-    self.filterList   = @[@(IF_NORMAL_FILTER),@(IF_INKWELL_FILTER),@(IF_EARLYBIRD_FILTER),@(IF_XPROII_FILTER),@(IF_LOMOFI_FILTER),@(IF_HUDSON_FILTER),@(IF_TOASTER_FILTER)];
+    self.filterList   = @[@(0),@(1),@(2),@(3),@(4)];
     self.filterNameList = @[@"normal", @"inkwell", @"earlybird", @"xproii", @"lomofi",@"hudson",@"toaster"];
 //    self.filterList   = @[@"normal", @"amaro", @"rise", @"hudson", @"xproii", @"sierra", @"lomofi", @"earlybird", @"sutro", @"toaster", @"brannan", @"inkwell", @"walden", @"hefe", @"valencia", @"nashville", @"1977"];
     
@@ -76,8 +76,8 @@
 #pragma mark - UICollectionViewDelegate
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    self.currentType = (IFFilterType)[self.filterList[indexPath.row] integerValue];
-    [self.imageScrollView.videoCamera switchFilter:self.currentType];
+    self.currentType = [self.filterList[indexPath.row] integerValue];
+    [self.imageScrollView switchFilter:self.currentType];
     [self.collectionView reloadData];
     if (indexPath.row != 0) {
         
@@ -92,9 +92,10 @@
 #pragma mark - Helper
 - (void)loadCurrentImage {
     TWPhoto *photo = self.list[self.currentIndex];
+    
     [self.imageScrollView displayImage:photo.originalImage];
     self.currentType  = 0;
-    [self.imageScrollView.videoCamera switchFilter:self.currentType];
+//    [self.imageScrollView.videoCamera switchFilter:self.currentType];
     [self.collectionView reloadData];
 }
 

@@ -23,14 +23,14 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         TWPhotoPickerController *photoPicker = [[TWPhotoPickerController alloc] init];
         photoPicker.cropBlock = ^(NSArray *list) {
-//            CGFloat size = [[UIScreen mainScreen] bounds].size.width;
+            CGFloat size = [[UIScreen mainScreen] bounds].size.width;
             NSInteger index = 0;
             CGFloat y = 50;
             CGFloat _width = 0;
             for (UIImage *image in list) {
                 CGFloat width = image.size.width;
-                CGFloat height = image.size.height;
-                UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(0, y, width, height)];
+                CGFloat height = size/width* image.size.height;
+                UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(0, y, size, height)];
                 imageview.image = image;
                 [v addSubview:imageview];
                 y+=height+30;

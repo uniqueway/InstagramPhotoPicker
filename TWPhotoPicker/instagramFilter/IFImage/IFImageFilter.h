@@ -7,9 +7,14 @@
 //
 
 #import "GPUImageFilter.h"
+#import "GPUImageTwoInputFilter.h"
 
 @interface IFImageFilter : GPUImageFilter {
-    GLuint filterSourceTexture3, filterSourceTexture4, filterSourceTexture5, filterSourceTexture6;
+
+    GPUImageFramebuffer *secondInputFramebuffer,*thirdInputFramebuffer;
+    
+    BOOL hasSetFirstTexture, hasReceivedFirstFrame, hasReceivedSecondFrame, firstFrameWasVideo, secondFrameWasVideo, hasSetSecondTexture;
+    GLuint filterSourceTexture,filterSourceTexture2,filterSourceTexture3, filterSourceTexture4, filterSourceTexture5, filterSourceTexture6;
 }
 
 @end

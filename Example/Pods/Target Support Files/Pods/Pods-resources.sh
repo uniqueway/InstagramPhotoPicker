@@ -58,6 +58,11 @@ install_resource()
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_resource "GPUImage/framework/Resources/lookup.png"
+  install_resource "GPUImage/framework/Resources/lookup_amatorka.png"
+  install_resource "GPUImage/framework/Resources/lookup_miss_etikate.png"
+  install_resource "GPUImage/framework/Resources/lookup_soft_elegance_1.png"
+  install_resource "GPUImage/framework/Resources/lookup_soft_elegance_2.png"
   install_resource "SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle"
   install_resource "../../TWPhotoPicker/Resources/back@2x.png"
   install_resource "../../TWPhotoPicker/Resources/back@3x.png"
@@ -118,6 +123,11 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "../../TWPhotoPicker/instagramFilter/Resources_for_IF_Filters/xproMap.png"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_resource "GPUImage/framework/Resources/lookup.png"
+  install_resource "GPUImage/framework/Resources/lookup_amatorka.png"
+  install_resource "GPUImage/framework/Resources/lookup_miss_etikate.png"
+  install_resource "GPUImage/framework/Resources/lookup_soft_elegance_1.png"
+  install_resource "GPUImage/framework/Resources/lookup_soft_elegance_2.png"
   install_resource "SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle"
   install_resource "../../TWPhotoPicker/Resources/back@2x.png"
   install_resource "../../TWPhotoPicker/Resources/back@3x.png"

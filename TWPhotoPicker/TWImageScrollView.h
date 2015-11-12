@@ -7,13 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "IFVideoCamera.h"
+#import "GPUImagePicture.h"
+//#import "IFImageFilter.h"
+//#import "InstaFilters.h"
 
 
 @interface TWImageScrollView : UIScrollView
-@property (strong, nonatomic) IFVideoCamera *videoCamera;
 - (void)displayImage:(UIImage *)image;
 
 - (UIImage *)capture;
 
+- (void)switchFilter:(NSInteger)type;
 @end

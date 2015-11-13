@@ -82,10 +82,6 @@
 - (UIImage *)capture {
     UIImage *image = [self.imageView image];
     CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
-
-//    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:image];//if need rotate caculate
-//    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
-
     CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
     UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
     CGImageRelease(ref);

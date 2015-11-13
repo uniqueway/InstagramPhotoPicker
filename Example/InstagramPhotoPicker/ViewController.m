@@ -27,9 +27,10 @@
             NSInteger index = 0;
             CGFloat y = 50;
             CGFloat _width = 0;
-            for (UIImage *image in list) {
-                CGFloat width = image.size.width;
-                CGFloat height = size/width* image.size.height;
+            for (NSDictionary *data in list) {
+                UIImage *image = data[@"image"];
+                CGFloat width  = image.size.width;
+                CGFloat height = size / width * image.size.height;
                 UIImageView *imageview = [[UIImageView alloc] initWithFrame:CGRectMake(0, y, size, height)];
                 imageview.image = image;
                 [v addSubview:imageview];

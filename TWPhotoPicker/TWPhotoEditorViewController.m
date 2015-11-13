@@ -108,7 +108,13 @@
 }
 
 - (void)nextOrSubmitAction {
-    self.resultList[self.currentIndex] = self.imageScrollView.capture;
+    UIImage *image = self.imageScrollView.capture;
+    TWPhoto *photo = self.list[self.currentIndex];
+    NSURL *url     = photo.asset.defaultRepresentation.url;
+    self.resultList[self.currentIndex] = @{
+                                           @"image" : image,
+                                           @"url"   : url
+                                           };
     if (self.currentIndex == self.list.count-1) {
         if (self.cropBlock) {
             self.cropBlock(self.resultList);

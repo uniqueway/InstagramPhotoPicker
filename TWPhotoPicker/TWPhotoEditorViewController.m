@@ -32,7 +32,6 @@
 @implementation TWPhotoEditorViewController
 - (id)initWithPhotoList:(NSArray *)list crop:(cropBlock)crop {
     self              = [super init];
-    self.view.backgroundColor = [UIColor whiteColor];
     self.currentType  = 0;
     self.cropBlock    = crop;
     self.list         = [list mutableCopy];
@@ -42,6 +41,8 @@
     
     self.resultList   = [[NSMutableArray alloc] initWithCapacity:list.count];
     self.currentIndex = 0;
+    self.view.backgroundColor = [UIColor whiteColor];
+
     return self;
 }
 

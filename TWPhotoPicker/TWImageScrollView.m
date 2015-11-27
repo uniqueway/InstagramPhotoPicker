@@ -228,6 +228,9 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 
 
 - (void)displayImage:(UIImage *)image {
+    if (!image) {
+        return;
+    }
     self.currentImage = image;
     if (!self.imageView) {
         self.imageView = [[UIImageView alloc] init];
@@ -253,12 +256,9 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     self.contentSize = CGSizeMake(width, height);
     self.imageView.frame = frame;
 
-    //    [self switchFilter:IF_NORMAL_FILTER];
 }
 
-- (void)configureForImageSize:(CGSize)imageSize
-{
-//    _imageSize = imageSize;
+- (void)configureForImageSize:(CGSize)imageSize {
     CGSize size = self.bounds.size;
     if (imageSize.width > imageSize.height) {
         self.contentOffset = CGPointMake((imageSize.width-size.width)/2, 0);

@@ -17,7 +17,6 @@ Pod::Spec.new do |s|
 
   s.source_files  = "TWPhotoPicker/*","TWPhotoPicker/instagramFilter/*/*.{h,m}"
   s.frameworks = "Foundation", "CoreGraphics", "UIKit"
-  s.resources = 'TWPhotoPicker/Resources/*','TWPhotoPicker/instagramFilter/filterIcon/*',
-  'TWPhotoPicker/instagramFilter/Resources_for_IF_Filters/*'
+  s.resources = 'TWPhotoPicker/Resources/*','TWPhotoPicker/instagramFilter/filterIcon/*'
 
 end

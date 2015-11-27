@@ -748,6 +748,13 @@
 		DF22EEEE8CD51A3E19A36DE882A575FC /* lookup_amatorka.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = lookup_amatorka.png; path = framework/Resources/lookup_amatorka.png; sourceTree = "<group>"; };
 		DF35D6273642AB28C8C2E028D91540B1 /* GPUImageDirectionalNonMaximumSuppressionFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageDirectionalNonMaximumSuppressionFilter.h; path = framework/Source/GPUImageDirectionalNonMaximumSuppressionFilter.h; sourceTree = "<group>"; };
 		E0394C4CF647A946A481E0A236793423 /* GPUImageDirectionalSobelEdgeDetectionFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageDirectionalSobelEdgeDetectionFilter.h; path = framework/Source/GPUImageDirectionalSobelEdgeDetectionFilter.h; sourceTree = "<group>"; };
+		E07D1B8B1C0846430002295A /* earlybird.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earlybird.jpg; sourceTree = "<group>"; };
+		E07D1B8C1C0846430002295A /* hudson.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = hudson.jpg; sourceTree = "<group>"; };
+		E07D1B8D1C0846430002295A /* inkwell.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = inkwell.jpg; sourceTree = "<group>"; };
+		E07D1B8E1C0846430002295A /* lomofi.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = lomofi.jpg; sourceTree = "<group>"; };
+		E07D1B8F1C0846430002295A /* normal.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = normal.jpg; sourceTree = "<group>"; };
+		E07D1B901C0846430002295A /* toaster.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = toaster.jpg; sourceTree = "<group>"; };
+		E07D1B911C0846430002295A /* xproii.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = xproii.jpg; sourceTree = "<group>"; };
 		E16636DFB2CA3B3A1F41324CAF53EC7D /* GPUImageMedianFilter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GPUImageMedianFilter.m; path = framework/Source/GPUImageMedianFilter.m; sourceTree = "<group>"; };
 		E225298B58EA797DD7855C441546AB1F /* TWPhotoPicker-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "TWPhotoPicker-Private.xcconfig"; sourceTree = "<group>"; };
 		E2F86F95ACC01518C253CA6EC2BA0A45 /* GPUImageCrosshairGenerator.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GPUImageCrosshairGenerator.m; path = framework/Source/GPUImageCrosshairGenerator.m; sourceTree = "<group>"; };
@@ -909,6 +916,7 @@
 		6852A8572BBF5A52D555D389A14B3FB5 /* TWPhotoPicker */ = {
 			isa = PBXGroup;
 			children = (
+				E07D1B891C0846430002295A /* instagramFilter */,
 				31FB8951BDEE548E546A37E5928C7324 /* Resources */,
 				00DC225EE5587980D482983EEC2C07BE /* Support Files */,
 				D1E203D1D082F4E9D7B3C481A6DAD9B2 /* TWPhotoPicker */,
@@ -1033,6 +1041,29 @@
 				B39905568476694C159D8C683BA56946 /* TWPhotoPickerController.m */,
 			);
 			path = TWPhotoPicker;
+			sourceTree = "<group>";
+		};
+		E07D1B891C0846430002295A /* instagramFilter */ = {
+			isa = PBXGroup;
+			children = (
+				E07D1B8A1C0846430002295A /* filterIcon */,
+			);
+			name = instagramFilter;
+			path = TWPhotoPicker/instagramFilter;
+			sourceTree = "<group>";
+		};
+		E07D1B8A1C0846430002295A /* filterIcon */ = {
+			isa = PBXGroup;
+			children = (
+				E07D1B8B1C0846430002295A /* earlybird.jpg */,
+				E07D1B8C1C0846430002295A /* hudson.jpg */,
+				E07D1B8D1C0846430002295A /* inkwell.jpg */,
+				E07D1B8E1C0846430002295A /* lomofi.jpg */,
+				E07D1B8F1C0846430002295A /* normal.jpg */,
+				E07D1B901C0846430002295A /* toaster.jpg */,
+				E07D1B911C0846430002295A /* xproii.jpg */,
+			);
+			path = filterIcon;
 			sourceTree = "<group>";
 		};
 		F1C3E9C80DF6C8EC15714B048F6441BE /* SVProgressHUD */ = {

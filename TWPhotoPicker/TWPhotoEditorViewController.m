@@ -265,20 +265,21 @@
 
 - (UICollectionView *)collectionView {
     if (_collectionView == nil) {
-        CGFloat value  = SCREEN_WIDTH / 6;
-        CGFloat y      = NavigationBarHeight*2+SCREEN_WIDTH-20;
-        CGFloat height = SCREEN_HEIGHT-y;
-        CGFloat x      = (SCREEN_WIDTH - self.filterList.count * (value) - 20)/2;
+        CGFloat padding = 10;
+        CGFloat value   = (SCREEN_WIDTH / self.filterList.count)-padding/2;
+        CGFloat y       = NavigationBarHeight*2+SCREEN_WIDTH-20;
+        CGFloat height  = SCREEN_HEIGHT-y;
+//        CGFloat x      = (SCREEN_WIDTH - self.filterList.count * (value) - 20)/2;
         CGFloat itemHeight = value*3/2-20;
 
         y += (height-itemHeight)/2;
         UICollectionViewFlowLayout *layout  = [[UICollectionViewFlowLayout alloc] init];
         layout.itemSize                     = CGSizeMake(value, itemHeight);
-        layout.sectionInset                 = UIEdgeInsetsMake(0, 10, 0, 10);
+        layout.sectionInset                 = UIEdgeInsetsMake(0, padding, 0, padding);
         layout.minimumInteritemSpacing      = 5;
         layout.minimumLineSpacing           = 0;
         layout.scrollDirection              = UICollectionViewScrollDirectionHorizontal;
-        CGRect rect = CGRectMake(x, y, SCREEN_WIDTH, itemHeight);
+        CGRect rect = CGRectMake(0, y, SCREEN_WIDTH, itemHeight);
         _collectionView = [[UICollectionView alloc] initWithFrame:rect collectionViewLayout:layout];
         _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.showsVerticalScrollIndicator   = NO;

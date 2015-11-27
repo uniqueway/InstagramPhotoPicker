@@ -9,7 +9,7 @@
 #import "TWPhotoFilterCollectionViewCell.h"
 
 #define DEFAULT_COLOR [UIColor clearColor]
-#define SELECTED_COLOR [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]
+#define SELECTED_COLOR [UIColor colorWithRed:127.0/255.0 green:184.0/255.0 blue:54.0/255.0 alpha:1]
 #define TITLE_HEIGHT 20.f
 #define TITLE_FONT [UIFont fontWithName:@"STHeitiSC-Light" size:10]
 #define PADDING 3.f
@@ -41,6 +41,7 @@
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     self.content.backgroundColor = selected ? SELECTED_COLOR : DEFAULT_COLOR;
+    self.title.textColor = selected ? [UIColor whiteColor] : [UIColor colorWithRed:30/255 green:30/255 blue:30/255 alpha:1];
 }
 
 

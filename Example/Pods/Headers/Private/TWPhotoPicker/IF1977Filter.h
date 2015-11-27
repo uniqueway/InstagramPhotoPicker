@@ -1,1 +1,0 @@
-../../../../../TWPhotoPicker/instagramFilter/IFFilters/IF1977Filter.h

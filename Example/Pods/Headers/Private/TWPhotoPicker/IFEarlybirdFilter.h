@@ -1,1 +1,0 @@
-../../../../../TWPhotoPicker/instagramFilter/IFFilters/IFEarlybirdFilter.h

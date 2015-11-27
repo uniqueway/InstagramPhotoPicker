@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ADCA875D9E7F1706236C8B6A"
+               BlueprintIdentifier = "74030B41DD91B7EEB13B8ED8"
                BuildableName = "libTWPhotoPicker.a"
                BlueprintName = "TWPhotoPicker"
                ReferencedContainer = "container:Pods.xcodeproj">

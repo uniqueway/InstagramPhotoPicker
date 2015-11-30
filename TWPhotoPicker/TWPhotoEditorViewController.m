@@ -111,9 +111,9 @@
 - (void)nextOrSubmitAction {
     UIImage *image = self.imageScrollView.capture;
     TWPhoto *photo = self.list[self.currentIndex];
-    NSURL *url = [NSURL URLWithString:@""];
-    if (photo.asset) {
-        url = photo.asset.defaultRepresentation.url;
+    NSURL *url = photo.asset.defaultRepresentation.url;
+    if (!url) {
+        url = [NSURL URLWithString:@""];
     }
     self.resultList[self.currentIndex] = @{
                                            @"image" : image,

@@ -122,11 +122,13 @@
                                            };
     if (self.currentIndex == self.list.count-1) {
         [SVProgressHUD showWithStatus:@"正在处理中"];
-        if (self.cropBlock) {
-            self.cropBlock(self.resultList);
-        }
-        [self dismissViewControllerAnimated:YES completion:NULL];
-        [SVProgressHUD dismiss];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.cropBlock) {
+                self.cropBlock(self.resultList);
+            }
+            [self dismissViewControllerAnimated:YES completion:NULL];
+            [SVProgressHUD dismiss];
+        });
     } else {
         self.currentIndex++;
         [self loadCurrentImage];

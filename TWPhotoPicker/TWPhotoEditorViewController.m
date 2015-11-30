@@ -113,6 +113,7 @@
     UIImage *image = self.imageScrollView.capture;
     TWPhoto *photo = self.list[self.currentIndex];
     NSURL *url = photo.asset.defaultRepresentation.url;
+    self.nextOrSubmitButton.enabled = NO;
     if (!url) {
         url = [NSURL URLWithString:@""];
     }
@@ -139,6 +140,7 @@
         if (self.list.count > 1) {
         }
         [self.nextOrSubmitButton setTitle:title forState:UIControlStateNormal];
+        self.nextOrSubmitButton.enabled = YES;
     }
     
 }

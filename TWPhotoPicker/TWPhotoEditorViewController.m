@@ -10,6 +10,7 @@
 #import "TWPhotoFilterCollectionViewCell.h"
 #import "TWPhoto.h"
 #import "TWImageScrollView.h"
+#import <SVProgressHUD.h>
 
 #define SCREEN_WIDTH CGRectGetWidth(self.view.bounds)
 #define SCREEN_HEIGHT CGRectGetHeight(self.view.bounds)
@@ -120,10 +121,12 @@
                                            @"url"   : url
                                            };
     if (self.currentIndex == self.list.count-1) {
+        [SVProgressHUD showWithStatus:@"正在处理中"];
         if (self.cropBlock) {
             self.cropBlock(self.resultList);
         }
         [self dismissViewControllerAnimated:YES completion:NULL];
+        [SVProgressHUD dismiss];
     } else {
         self.currentIndex++;
         [self loadCurrentImage];

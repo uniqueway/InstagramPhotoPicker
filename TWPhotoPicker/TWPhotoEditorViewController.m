@@ -111,7 +111,10 @@
 - (void)nextOrSubmitAction {
     UIImage *image = self.imageScrollView.capture;
     TWPhoto *photo = self.list[self.currentIndex];
-    NSURL *url     = photo.asset.defaultRepresentation.url;
+    NSURL *url = [NSURL URLWithString:@""];
+    if (photo.asset) {
+        url = photo.asset.defaultRepresentation.url;
+    }
     self.resultList[self.currentIndex] = @{
                                            @"image" : image,
                                            @"url"   : url
@@ -269,7 +272,6 @@
         CGFloat value   = (SCREEN_WIDTH / self.filterList.count)-padding/2;
         CGFloat y       = NavigationBarHeight*2+SCREEN_WIDTH-20;
         CGFloat height  = SCREEN_HEIGHT-y;
-//        CGFloat x      = (SCREEN_WIDTH - self.filterList.count * (value) - 20)/2;
         CGFloat itemHeight = value*3/2-20;
 
         y += (height-itemHeight)/2;

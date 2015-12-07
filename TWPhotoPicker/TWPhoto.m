@@ -13,11 +13,14 @@ static NSString * const IMAGE_SAVE_PATH = @"UNWIMAGE";
 @implementation TWPhoto
 
 - (UIImage *)thumbnailImage {
-    if (self.asset) {
-        return [UIImage imageWithCGImage:self.asset.thumbnail];
-    } else {
-        return [UIImage imageWithContentsOfFile:[self localPath:[NSString stringWithFormat:@"%@!s270",self.imageName]]];
+    if (!_thumbnailImage) {
+        if (self.asset) {
+            _thumbnailImage = [UIImage imageWithCGImage:self.asset.thumbnail];
+        } else {
+            _thumbnailImage = [UIImage imageWithContentsOfFile:[self localPath:[NSString stringWithFormat:@"%@!s270",self.imageName]]];
+        }
     }
+    return _thumbnailImage;
 }
 
 - (NSString *)localPath:(NSString *)imageName {

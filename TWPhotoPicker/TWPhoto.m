@@ -8,17 +8,34 @@
 
 #import "TWPhoto.h"
 
+static NSString * const IMAGE_SAVE_PATH = @"UNWIMAGE";
+
 @implementation TWPhoto
 
 - (UIImage *)thumbnailImage {
-    return [UIImage imageWithCGImage:self.asset.thumbnail];
+    if (self.asset) {
+        return [UIImage imageWithCGImage:self.asset.thumbnail];
+    } else {
+        return [UIImage imageWithContentsOfFile:[self localPath:[NSString stringWithFormat:@"%@!s270",self.imageName]]];
+    }
+}
+
+- (NSString *)localPath:(NSString *)imageName {
+    NSArray *path          = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentPath = [path objectAtIndex:0];
+    NSString *imageDocPath = [documentPath stringByAppendingPathComponent:IMAGE_SAVE_PATH];
+    return [[imageDocPath stringByAppendingString:@"/"] stringByAppendingString:imageName];
 }
 
 - (UIImage *)originalImage {
     if (!_originalImage) {
-        _originalImage = [UIImage imageWithCGImage:self.asset.defaultRepresentation.fullResolutionImage
-                                             scale:self.asset.defaultRepresentation.scale
-                                       orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];
+        if (self.asset) {
+            _originalImage = [UIImage imageWithCGImage:self.asset.defaultRepresentation.fullResolutionImage
+                                                 scale:self.asset.defaultRepresentation.scale
+                                           orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];
+        } else {
+            _originalImage = [UIImage imageWithContentsOfFile:[self localPath:self.imageName]];
+        }
     }
     return _originalImage;
 }

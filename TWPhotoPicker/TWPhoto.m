@@ -37,7 +37,7 @@ static NSString * const IMAGE_SAVE_PATH = @"UNWIMAGE";
                                                  scale:self.asset.defaultRepresentation.scale
                                            orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];
         } else {
-            _originalImage = [UIImage imageWithContentsOfFile:[self localPath:self.imageName]];
+            _originalImage = [UIImage imageWithContentsOfFile:[self localPath:[NSString stringWithFormat:@"%@.jpg",self.imageName]]];
         }
     }
     return _originalImage;

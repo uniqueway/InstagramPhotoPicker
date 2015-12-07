@@ -106,7 +106,11 @@
 
 
 - (void)backAction {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (self.navigationController.viewControllers.count == 1) {
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)nextOrSubmitAction {

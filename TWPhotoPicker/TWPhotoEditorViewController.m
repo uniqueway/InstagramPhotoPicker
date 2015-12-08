@@ -10,16 +10,19 @@
 #import "TWPhotoFilterCollectionViewCell.h"
 #import "TWPhoto.h"
 #import "TWImageScrollView.h"
+#import "TWPhotoImageItem.h"
 #import <SVProgressHUD.h>
 
-#define SCREEN_WIDTH CGRectGetWidth(self.view.bounds)
-#define SCREEN_HEIGHT CGRectGetHeight(self.view.bounds)
-#define NavigationBarHeight 64
+#define SCREEN_WIDTH CGRectGetWidth([UIScreen mainScreen].bounds)
+#define SCREEN_HEIGHT CGRectGetHeight([UIScreen mainScreen].bounds)
+static CGFloat const NavigationBarHeight = 64;
 
 @interface TWPhotoEditorViewController()<UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong) NSMutableArray *list;
+@property (nonatomic, strong) NSMutableArray *thumbnailImageList;
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UICollectionView *collectionView;
+@property (strong, nonatomic) UIView *imageListView;
 @property (strong, nonatomic) TWImageScrollView *imageScrollView;
 @property (nonatomic, assign) NSInteger currentType;
 @property (nonatomic, strong) NSArray *filterList;
@@ -32,6 +35,7 @@
 
 @implementation TWPhotoEditorViewController
 - (id)initWithPhotoList:(NSArray *)list crop:(cropBlock)crop {
+    
     self              = [super init];
     self.currentType  = 0;
     self.cropBlock    = crop;
@@ -56,6 +60,7 @@
     [self.navigationController setNavigationBarHidden:YES];
     [self.view addSubview:self.topView];
     [self.view insertSubview:self.collectionView belowSubview:self.topView];
+    [self.view insertSubview:self.imageListView  belowSubview:self.topView];
     [self loadCurrentImage];
 }
 #pragma mark - UICollectionViewDataSource
@@ -106,11 +111,17 @@
 
 
 - (void)backAction {
-    if (self.navigationController.viewControllers.count == 1) {
-        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        [self.navigationController popViewControllerAnimated:YES];
+    NSMutableArray *list = [@[] mutableCopy];
+    for (NSDictionary *dict in self.resultList) {
+        if (dict) {
+            [list addObject:dict];
+        }
     }
+    if (self.cropBlock && list.count > 0) {
+        self.cropBlock(list);
+    }
+
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)nextOrSubmitAction {
@@ -125,6 +136,9 @@
                                            @"image" : image,
                                            @"url"   : url
                                            };
+    TWPhotoImageItem *item = self.thumbnailImageList[self.currentIndex];
+    item.image.image = [self.class generatePhotoThumbnail:image];
+    item.icon.hidden = NO;
     if (self.currentIndex == self.list.count-1) {
         [SVProgressHUD showWithStatus:@"正在处理中"];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -165,6 +179,7 @@
         rect = CGRectMake(0, 0, 60, CGRectGetHeight(navView.bounds));
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         backBtn.frame = rect;
+        backBtn.transform = CGAffineTransformMakeRotation(-M_PI_2);
         [backBtn setImage:[UIImage imageNamed:@"back.png"]
                  forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
@@ -212,34 +227,6 @@
     return _topView;
 }
 
-- (void)addButtonsToDragView:(UIView *)view {
-    NSArray *list   = @[@"滤镜"];
-    CGFloat height  = 44;
-    CGFloat width   = SCREEN_WIDTH/list.count;
-    CGSize itemSize = (CGSize){width,height};
-    NSInteger index = 0;
-    for (NSString *title in list) {
-        UIButton *button = [self buttonWithTitle:title withSize:itemSize];
-        button.selected  = YES;
-        button.frame     = CGRectMake(width*index, 0, width, height);
-        [view addSubview:button];
-        index++;
-    }
-}
-
-- (UIButton *)buttonWithTitle:(NSString *)title withSize:(CGSize)size{
-    UIButton *button    = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIColor *darkColor  = [UIColor colorWithRed:46.0/255.0 green:43.0/255.0 blue:37.0/255.0 alpha:1];
-    UIColor *whiteColor = [UIColor whiteColor];
-    [button setTitle:title forState:UIControlStateNormal];
-    [button setTitleColor:darkColor forState:UIControlStateNormal];
-    [button setTitleColor:whiteColor forState:UIControlStateSelected];
-    [button setBackgroundImage:[self.class imageWithCGColor:whiteColor.CGColor size:size] forState:UIControlStateNormal];
-    [button setBackgroundImage:[self.class imageWithCGColor:darkColor.CGColor size:size] forState:UIControlStateSelected];
-    
-    return button;
-}
-
 + (UIImage *)imageWithCGColor:(CGColorRef)cgColor_
                          size:(CGSize)size_
 {
@@ -277,8 +264,96 @@
     return image;
 }
 
+- (void)addButtonsToDragView:(UIView *)view {
+    NSArray *list   = @[@"照片",@"滤镜"];
+    CGFloat height  = 44;
+    CGFloat width   = SCREEN_WIDTH/list.count;
+    CGSize itemSize = (CGSize){width,height};
+    NSInteger index = 0;
+    for (NSString *title in list) {
+        UIButton *button = [self buttonWithTitle:title withSize:itemSize];
+        BOOL flag = NO;
+        if (index == list.count-1) {
+            flag = YES;
+        }
+        button.selected  = flag;
+        button.tag       = index;
+        button.frame     = CGRectMake(width*index, 0, width, height);
+        [button addTarget:self action:@selector(buttonDidPress:) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:button];
+        index++;
+    }
+}
+
+- (void)buttonDidPress:(UIButton *)sender {
+    NSInteger index = sender.tag;
+    NSArray *list = @[self.collectionView,self.imageListView];
+    for (UIButton *button in [[sender superview]subviews]) {
+        if ([button isKindOfClass:UIButton.class]) {
+            button.selected = NO;
+        }
+    }
+    sender.selected = YES;
+    for (UIView *view in list) {
+        view.hidden = NO;
+    }
+    [list[index] setHidden:YES];
+}
+
+
++ (UIImage *)generatePhotoThumbnail:(UIImage *)image {
+    // Create a thumbnail version of the image for the event object.
+    CGSize size = image.size;
+    CGSize croppedSize;
+    CGFloat ratio   = SCREEN_WIDTH/3 - 20;
+    CGFloat offsetX = 0.0;
+    CGFloat offsetY = 0.0;
+    
+    // check the size of the image, we want to make it
+    // a square with sides the size of the smallest dimension
+    if (size.width > size.height) {
+        offsetX = (size.height - size.width) / 2;
+        croppedSize = CGSizeMake(size.height, size.height);
+    } else {
+        offsetY = (size.width - size.height) / 2;
+        croppedSize = CGSizeMake(size.width, size.width);
+    }
+    
+    // Crop the image before resize
+    CGRect clippedRect = CGRectMake(offsetX * -1, offsetY * -1, croppedSize.width, croppedSize.height);
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], clippedRect);
+    // Done cropping
+    
+    // Resize the image
+    CGRect rect = CGRectMake(0.0, 0.0, ratio, ratio);
+    
+    UIGraphicsBeginImageContext(rect.size);
+    [[UIImage imageWithCGImage:imageRef] drawInRect:rect];
+    UIImage *thumbnail = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    CGImageRelease(imageRef);
+    // Done Resizing
+    
+    return thumbnail;
+}
+
+#pragma mark getters & setters
+
+- (UIButton *)buttonWithTitle:(NSString *)title withSize:(CGSize)size{
+    UIButton *button    = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIColor *darkColor  = [UIColor colorWithRed:46.0/255.0 green:43.0/255.0 blue:37.0/255.0 alpha:1];
+    UIColor *whiteColor = [UIColor whiteColor];
+    [button setTitle:title forState:UIControlStateNormal];
+    [button setTitleColor:darkColor forState:UIControlStateNormal];
+    [button setTitleColor:whiteColor forState:UIControlStateSelected];
+    [button setBackgroundImage:[self.class imageWithCGColor:whiteColor.CGColor size:size] forState:UIControlStateNormal];
+    [button setBackgroundImage:[self.class imageWithCGColor:darkColor.CGColor size:size] forState:UIControlStateSelected];
+    
+    return button;
+}
+
 - (UICollectionView *)collectionView {
-    if (_collectionView == nil) {
+    if (!_collectionView) {
         CGFloat padding = 10;
         CGFloat value   = (SCREEN_WIDTH / self.filterList.count)-padding/2;
         CGFloat y       = NavigationBarHeight*2+SCREEN_WIDTH-20;
@@ -306,4 +381,34 @@
     }
     return _collectionView;
 }
+
+- (UIView *)imageListView {
+    if (!_imageListView) {
+        CGFloat padding  = 20;
+        CGFloat y        = NavigationBarHeight*2+SCREEN_WIDTH-20;
+        CGFloat height   = SCREEN_HEIGHT-y;
+        CGFloat itemSize = SCREEN_WIDTH/3 - 20;
+        NSInteger index  = 0;
+        self.thumbnailImageList = [@[] mutableCopy];
+        _imageListView = [[UIView alloc] initWithFrame:CGRectMake(0, y, SCREEN_WIDTH, height)];
+        _imageListView.hidden = YES;
+        CGFloat x = 0;
+        for (TWPhoto *photo in self.list) {
+            x += itemSize + padding;
+            if (index == 0) {
+                x = 10;
+            }
+            CGRect rect = CGRectMake(x, (height - itemSize)/2, itemSize, itemSize);;
+            TWPhotoImageItem *item = [[TWPhotoImageItem alloc] initWithFrame:rect];
+            item.image.image = [photo thumbnailImage];
+            [_imageListView addSubview:item];
+            [self.thumbnailImageList addObject:item];
+            index++;
+        }
+    }
+    return _imageListView;
+}
+
+
+
 @end

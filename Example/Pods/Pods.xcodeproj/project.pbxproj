@@ -322,6 +322,8 @@
 		DEAFB67E8D87064B733624654C5206D2 /* GPUImageHistogramFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 304D9C2ADDABDF66CBC4F84F9D85FAC9 /* GPUImageHistogramFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		DF1DD61E8906E461E94E8ABC6438ADBE /* GPUImageGlassSphereFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E1449AE7696D6D1FBDE2F0E3FD21D5 /* GPUImageGlassSphereFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		DFDFF6986EEE135F82ECE359032DAD14 /* GPUImageUnsharpMaskFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E6D428493844D8636185C1C8217C24F6 /* GPUImageUnsharpMaskFilter.h */; };
+		E00BB8421C16CAD3003D806E /* TWPhotoImageItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E00BB8401C16CAD3003D806E /* TWPhotoImageItem.h */; };
+		E00BB8431C16CAD3003D806E /* TWPhotoImageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E00BB8411C16CAD3003D806E /* TWPhotoImageItem.m */; };
 		E0932DE3DF95E3D44B1339B2EA995838 /* GPUImageBulgeDistortionFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 108C970718ADB5DC73D4BD9F221C4A2C /* GPUImageBulgeDistortionFilter.h */; };
 		E0C5E0374AFBEE94A81AFF7EFBFF5B4F /* GPUImageTwoInputFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CB3BEC3A6AC6A4E037717D84204AEB /* GPUImageTwoInputFilter.h */; };
 		E1417771F840A68B4C2B5A0028130391 /* GPUImageParallelCoordinateLineTransformFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = AD466574AD87C9E747249717D0DE54F6 /* GPUImageParallelCoordinateLineTransformFilter.h */; };
@@ -747,6 +749,8 @@
 		DD01577FC300F94DC1936486A61FDF08 /* GPUImageGaussianBlurFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageGaussianBlurFilter.h; path = framework/Source/GPUImageGaussianBlurFilter.h; sourceTree = "<group>"; };
 		DF22EEEE8CD51A3E19A36DE882A575FC /* lookup_amatorka.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = lookup_amatorka.png; path = framework/Resources/lookup_amatorka.png; sourceTree = "<group>"; };
 		DF35D6273642AB28C8C2E028D91540B1 /* GPUImageDirectionalNonMaximumSuppressionFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageDirectionalNonMaximumSuppressionFilter.h; path = framework/Source/GPUImageDirectionalNonMaximumSuppressionFilter.h; sourceTree = "<group>"; };
+		E00BB8401C16CAD3003D806E /* TWPhotoImageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWPhotoImageItem.h; sourceTree = "<group>"; };
+		E00BB8411C16CAD3003D806E /* TWPhotoImageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWPhotoImageItem.m; sourceTree = "<group>"; };
 		E0394C4CF647A946A481E0A236793423 /* GPUImageDirectionalSobelEdgeDetectionFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageDirectionalSobelEdgeDetectionFilter.h; path = framework/Source/GPUImageDirectionalSobelEdgeDetectionFilter.h; sourceTree = "<group>"; };
 		E07D1B8B1C0846430002295A /* earlybird.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earlybird.jpg; sourceTree = "<group>"; };
 		E07D1B8C1C0846430002295A /* hudson.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = hudson.jpg; sourceTree = "<group>"; };
@@ -1039,6 +1043,8 @@
 				52C6D99BF3D94ACEF874C08CD4AE193B /* TWPhotoLoader.m */,
 				4E41D67DF7D595C0DFB88F2C68AED571 /* TWPhotoPickerController.h */,
 				B39905568476694C159D8C683BA56946 /* TWPhotoPickerController.m */,
+				E00BB8401C16CAD3003D806E /* TWPhotoImageItem.h */,
+				E00BB8411C16CAD3003D806E /* TWPhotoImageItem.m */,
 			);
 			path = TWPhotoPicker;
 			sourceTree = "<group>";
@@ -1600,6 +1606,7 @@
 				88ADAE19E26A8357FA41E2232F83CDE2 /* GPUImageToonFilter.h in Headers */,
 				F4F064DB68266FD6877C5BDED45954B5 /* GPUImageTransformFilter.h in Headers */,
 				E74CEA78090FC458F8384D6CA784AB83 /* GPUImageTwoInputCrossTextureSamplingFilter.h in Headers */,
+				E00BB8421C16CAD3003D806E /* TWPhotoImageItem.h in Headers */,
 				E0C5E0374AFBEE94A81AFF7EFBFF5B4F /* GPUImageTwoInputFilter.h in Headers */,
 				80048B27DADBAD7F21213F1079D40AD6 /* GPUImageTwoPassFilter.h in Headers */,
 				3B44BB92626A7A0F77A87CD87A3E2693 /* GPUImageTwoPassTextureSamplingFilter.h in Headers */,
@@ -1839,6 +1846,7 @@
 				F7E86BAC739893C4D3C4A112CCA4CA8D /* GPUImageLowPassFilter.m in Sources */,
 				5189A3B70C2F91D9D37C2A0EB40E6289 /* GPUImageLuminanceRangeFilter.m in Sources */,
 				CC31F6B60804E48CDEDDA28C13E5C0E3 /* GPUImageLuminanceThresholdFilter.m in Sources */,
+				E00BB8431C16CAD3003D806E /* TWPhotoImageItem.m in Sources */,
 				5431A42421153670AE80114A9FC95262 /* GPUImageLuminosity.m in Sources */,
 				43DCB37E3946B6263D6FB6C3F9E53FA1 /* GPUImageLuminosityBlendFilter.m in Sources */,
 				63B7DF22907D1F926C5EA3672A1F85F8 /* GPUImageMaskFilter.m in Sources */,

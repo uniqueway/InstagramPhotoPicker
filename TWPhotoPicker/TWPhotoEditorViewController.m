@@ -265,23 +265,29 @@ static CGFloat const NavigationBarHeight = 64;
 }
 
 - (void)addButtonsToDragView:(UIView *)view {
-    NSArray *list   = @[@"照片",@"滤镜"];
+    NSArray *list   = @[];
+    if (self.list.count == 1) {
+        list = @[@"滤镜"];
+    } else {
+        list = @[@"照片",@"滤镜"];
+    }
     CGFloat height  = 44;
     CGFloat width   = SCREEN_WIDTH/list.count;
     CGSize itemSize = (CGSize){width,height};
     NSInteger index = 0;
+    UIButton *button = nil;
     for (NSString *title in list) {
-        UIButton *button = [self buttonWithTitle:title withSize:itemSize];
+        button = [self buttonWithTitle:title withSize:itemSize];
         BOOL flag = NO;
-        if (index == list.count-1) {
-            flag = YES;
-        }
         button.selected  = flag;
         button.tag       = index;
         button.frame     = CGRectMake(width*index, 0, width, height);
         [button addTarget:self action:@selector(buttonDidPress:) forControlEvents:UIControlEventTouchUpInside];
         [view addSubview:button];
         index++;
+    }
+    if (list.count > 1) {
+        [button setSelected:YES];
     }
 }
 
@@ -290,10 +296,10 @@ static CGFloat const NavigationBarHeight = 64;
     NSArray *list = @[self.collectionView,self.imageListView];
     for (UIButton *button in [[sender superview]subviews]) {
         if ([button isKindOfClass:UIButton.class]) {
-            button.selected = NO;
+            button.selected = YES;
         }
     }
-    sender.selected = YES;
+    sender.selected = NO;
     for (UIView *view in list) {
         view.hidden = NO;
     }
@@ -375,7 +381,7 @@ static CGFloat const NavigationBarHeight = 64;
         _collectionView.dataSource = self;
         _collectionView.delegate = self;
         _collectionView.backgroundColor = [UIColor whiteColor];
-        
+        _collectionView.hidden = (self.list.count > 1);
         [_collectionView registerClass:[TWPhotoFilterCollectionViewCell class] forCellWithReuseIdentifier:@"TWPhotoFilterCollectionViewCell"];
         
     }
@@ -391,7 +397,7 @@ static CGFloat const NavigationBarHeight = 64;
         NSInteger index  = 0;
         self.thumbnailImageList = [@[] mutableCopy];
         _imageListView = [[UIView alloc] initWithFrame:CGRectMake(0, y, SCREEN_WIDTH, height)];
-        _imageListView.hidden = YES;
+        _imageListView.hidden = !(self.list.count > 1);
         CGFloat x = 0;
         for (TWPhoto *photo in self.list) {
             x += itemSize + padding;

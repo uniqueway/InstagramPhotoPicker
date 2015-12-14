@@ -19,18 +19,19 @@
     CGFloat height = frame.size.height;
     CGRect rect = CGRectMake(0, 0, width, height);
     UIImage *iconImage = [UIImage imageNamed:@"select_photo_icon"];
-    CGFloat iconWidth  = iconImage.size.width/2;
-    CGFloat iconHeight = iconImage.size.height/2;
+    CGFloat iconWidth  = iconImage.size.width/3;
+    CGFloat iconHeight = iconImage.size.height/3;
+    self.iconContent = [[UIView alloc] initWithFrame:rect];
+    self.iconContent.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.2];
+    self.iconContent.hidden = YES;
     self.icon = [[UIImageView alloc] initWithImage:iconImage];
     self.icon.frame = CGRectMake((width-iconWidth)/2, (height-iconHeight)/2, iconWidth, iconHeight);
-    self.icon.hidden = YES;
     self.image = [[UIImageView alloc] initWithFrame:rect];
     self.image.contentMode = UIViewContentModeScaleAspectFill;
     [self addSubview:self.image];
-    [self addSubview:self.icon];
+    [self addSubview:self.iconContent];
+    [self.iconContent addSubview:self.icon];
+    self.layer.borderColor = [UIColor colorWithRed:0.0/255.0 green:.0/255.0 blue:.0/255.0 alpha:1].CGColor;
     return self;
 }
-
-
-
 @end

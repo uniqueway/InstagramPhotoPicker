@@ -31,7 +31,7 @@
     [self addSubview:self.image];
     [self addSubview:self.iconContent];
     [self.iconContent addSubview:self.icon];
-    self.layer.borderColor = [UIColor colorWithRed:0.0/255.0 green:.0/255.0 blue:.0/255.0 alpha:1].CGColor;
+    self.layer.borderColor = [UIColor colorWithRed:127.0/255.0 green:184.0/255.0 blue:54.0/255.0 alpha:1].CGColor;
     return self;
 }
 @end

@@ -10,6 +10,7 @@
 #import <GPUImage/GPUImage.h>
 
 #define rad(angle) ((angle) / 180.0 * M_PI)
+static const CGFloat MAX_SIZE = 1500;
 
 @interface TWImageScrollView ()<UIScrollViewDelegate>
 {
@@ -84,6 +85,13 @@
     CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
     CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
     UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
+//    if (cropped.size.width > MAX_SIZE) {
+        CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
+        UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
+        [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
+        cropped = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+//    }
     CGImageRelease(ref);
     ref = NULL;
     return cropped;

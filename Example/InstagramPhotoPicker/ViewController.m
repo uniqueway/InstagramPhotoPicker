@@ -38,6 +38,9 @@
                 if (image.size.width > _width) {
                     _width = image.size.width;
                 }
+                NSData *imgData = UIImageJPEGRepresentation(image, 1.0);
+                NSLog(@"Size of Image:%f KB",(double)[imgData length]/1000);
+                NSLog(@"%@",image);
                 index++;
             }
             v.contentSize = (CGSize){_width+1,y};

@@ -13,6 +13,8 @@
 #import "TWPhotoImageItem.h"
 #import <SVProgressHUD.h>
 
+#import <mach/mach_time.h>
+
 #define SCREEN_WIDTH CGRectGetWidth([UIScreen mainScreen].bounds)
 #define SCREEN_HEIGHT CGRectGetHeight([UIScreen mainScreen].bounds)
 static CGFloat const NavigationBarHeight = 64;
@@ -22,7 +24,7 @@ static CGFloat const NavigationBarHeight = 64;
 @property (nonatomic, strong) NSMutableArray *thumbnailImageList;
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UICollectionView *collectionView;
-@property (strong, nonatomic) UIView *imageListView;
+//@property (strong, nonatomic) UIView *imageListView;
 @property (strong, nonatomic) TWImageScrollView *imageScrollView;
 @property (nonatomic, assign) NSInteger currentType;
 @property (nonatomic, strong) NSArray *filterList;
@@ -30,7 +32,7 @@ static CGFloat const NavigationBarHeight = 64;
 @property (strong, nonatomic) NSMutableArray *resultList;
 @property (strong, nonatomic) UIButton *nextOrSubmitButton;
 @property (nonatomic, assign) NSInteger currentIndex;
-
+@property (nonatomic, strong) UILabel *titleLabel;
 @end
 
 @implementation TWPhotoEditorViewController
@@ -43,11 +45,9 @@ static CGFloat const NavigationBarHeight = 64;
     self.filterList   = @[@(0),@(1),@(2),@(3),@(4)];
     self.filterNameList = @[@"normal", @"inkwell", @"earlybird", @"xproii", @"lomofi",@"hudson",@"toaster"];
 //    self.filterList   = @[@"normal", @"amaro", @"rise", @"hudson", @"xproii", @"sierra", @"lomofi", @"earlybird", @"sutro", @"toaster", @"brannan", @"inkwell", @"walden", @"hefe", @"valencia", @"nashville", @"1977"];
-    
     self.resultList   = [[NSMutableArray alloc] initWithCapacity:list.count];
     self.currentIndex = 0;
     self.view.backgroundColor = [UIColor blackColor];
-
     return self;
 }
 
@@ -60,8 +60,11 @@ static CGFloat const NavigationBarHeight = 64;
     [self.navigationController setNavigationBarHidden:YES];
     [self.view addSubview:self.topView];
     [self.view insertSubview:self.collectionView belowSubview:self.topView];
-    [self.view insertSubview:self.imageListView  belowSubview:self.topView];
     [self loadCurrentImage];
+    if (self.list.count > 1) {
+        self.titleLabel.text = self.navigtationTitle;
+    }
+
 }
 #pragma mark - UICollectionViewDataSource
 
@@ -125,30 +128,35 @@ static CGFloat const NavigationBarHeight = 64;
 }
 
 - (void)nextOrSubmitAction {
-    UIImage *image = self.imageScrollView.capture;
-    TWPhoto *photo = self.list[self.currentIndex];
-    NSURL *url = photo.asset.defaultRepresentation.url;
-    self.nextOrSubmitButton.enabled = NO;
-    if (!url) {
-        url = [NSURL URLWithString:@""];
-    }
-    self.resultList[self.currentIndex] = @{
-                                           @"image" : image,
-                                           @"url"   : url
-                                           };
-    TWPhotoImageItem *item = self.thumbnailImageList[self.currentIndex];
-    item.image.image = [self.class generatePhotoThumbnail:image];
-    item.iconContent.hidden = NO;
-    item.layer.borderWidth  = 0;
-    if (self.currentIndex == self.list.count-1) {
-        [SVProgressHUD showWithStatus:@"正在处理中"];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    BOOL isLast    = self.currentIndex == self.list.count-1;
+    __weak __typeof__(self) weakSelf = self;
+    NSInteger index = self.currentIndex;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *image = weakSelf.imageScrollView.capture;
+        TWPhoto *photo = weakSelf.list[index];
+        NSURL *url = photo.asset.defaultRepresentation.url;
+        if (!url) {
+            url = [NSURL URLWithString:@""];
+        }
+        NSDictionary *dict = @{
+                               @"image" : image,
+                               @"url"   : url
+                               };
+//        weakSelf.resultList[index] = dict;
+        dispatch_async(dispatch_get_main_queue(), ^{
             if (self.cropBlock) {
-                self.cropBlock(self.resultList);
+                weakSelf.cropBlock(@[dict]);
             }
-            [self dismissViewControllerAnimated:YES completion:NULL];
-            [SVProgressHUD dismiss];
+            if (isLast) {
+                [self dismissViewControllerAnimated:YES completion:NULL];
+                [SVProgressHUD dismiss];
+            }
         });
+
+    });
+    self.nextOrSubmitButton.enabled = NO;
+    if (isLast) {
+        [SVProgressHUD showWithStatus:@"正在处理中"];
     } else {
         self.currentIndex++;
         [self loadCurrentImage];
@@ -156,14 +164,11 @@ static CGFloat const NavigationBarHeight = 64;
         if (self.currentIndex == self.list.count-1) {
             title = @"完成";
         }
-        if (self.list.count > 1) {
-        }
         [self.nextOrSubmitButton setTitle:title forState:UIControlStateNormal];
         self.nextOrSubmitButton.enabled = YES;
-        item = self.thumbnailImageList[self.currentIndex];
-        item.layer.borderWidth  = 4.f;
-
+        self.titleLabel.text = self.navigtationTitle;
     }
+    
     
 }
 - (UIView *)topView {
@@ -189,14 +194,7 @@ static CGFloat const NavigationBarHeight = 64;
         [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
         [navView addSubview:backBtn];
         
-        rect = CGRectMake((SCREEN_WIDTH-100)/2, 0, 100, CGRectGetHeight(navView.bounds));
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:rect];
-        titleLabel.text = @"选择图片";
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.textColor = [UIColor whiteColor];
-        titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
-        [navView addSubview:titleLabel];
+        [navView addSubview:self.titleLabel];
         
         rect = CGRectMake(SCREEN_WIDTH-80, 0, 80, CGRectGetHeight(navView.bounds));
         self.nextOrSubmitButton = [[UIButton alloc] initWithFrame:rect];
@@ -270,11 +268,7 @@ static CGFloat const NavigationBarHeight = 64;
 
 - (void)addButtonsToDragView:(UIView *)view {
     NSArray *list   = @[];
-    if (self.list.count == 1) {
-        list = @[@"滤镜"];
-    } else {
-        list = @[@"照片",@"滤镜"];
-    }
+    list = @[@"滤镜"];
     CGFloat height  = 44;
     CGFloat width   = SCREEN_WIDTH/list.count;
     CGSize itemSize = (CGSize){width,height};
@@ -282,22 +276,21 @@ static CGFloat const NavigationBarHeight = 64;
     UIButton *button = nil;
     for (NSString *title in list) {
         button = [self buttonWithTitle:title withSize:itemSize];
-        BOOL flag = NO;
-        button.selected  = flag;
+        button.selected  = YES;
         button.tag       = index;
         button.frame     = CGRectMake(width*index, 0, width, height);
         [button addTarget:self action:@selector(buttonDidPress:) forControlEvents:UIControlEventTouchUpInside];
         [view addSubview:button];
         index++;
     }
-    if (list.count > 1) {
-        [button setSelected:YES];
-    }
+//    if (list.count > 1) {
+//        [button setSelected:YES];
+//    }
 }
 
 - (void)buttonDidPress:(UIButton *)sender {
     NSInteger index = sender.tag;
-    NSArray *list = @[self.collectionView,self.imageListView];
+    NSArray *list = @[self.collectionView];
     for (UIButton *button in [[sender superview]subviews]) {
         if ([button isKindOfClass:UIButton.class]) {
             button.selected = YES;
@@ -462,43 +455,59 @@ static CGFloat const NavigationBarHeight = 64;
         _collectionView.dataSource = self;
         _collectionView.delegate = self;
         _collectionView.backgroundColor = [UIColor whiteColor];
-        _collectionView.hidden = (self.list.count > 1);
+//        _collectionView.hidden = (self.list.count > 1);
         [_collectionView registerClass:[TWPhotoFilterCollectionViewCell class] forCellWithReuseIdentifier:@"TWPhotoFilterCollectionViewCell"];
         
     }
     return _collectionView;
 }
 
-- (UIView *)imageListView {
-    if (!_imageListView) {
-        CGFloat padding  = 20;
-        CGFloat y        = NavigationBarHeight*2+SCREEN_WIDTH-20;
-        CGFloat height   = SCREEN_HEIGHT-y;
-        CGFloat itemSize = SCREEN_WIDTH/3 - 20;
-        NSInteger index  = 0;
-        self.thumbnailImageList = [@[] mutableCopy];
-        _imageListView = [[UIView alloc] initWithFrame:CGRectMake(0, y, SCREEN_WIDTH, height)];
-        _imageListView.hidden = !(self.list.count > 1);
-        CGFloat x = 0;
-        for (TWPhoto *photo in self.list) {
-            x += itemSize + padding;
-            if (index == 0) {
-                x = 10;
-            }
-            CGRect rect = CGRectMake(x, (height - itemSize)/2, itemSize, itemSize);;
-            TWPhotoImageItem *item = [[TWPhotoImageItem alloc] initWithFrame:rect];
-            if (index == 0) {
-                item.layer.borderWidth  = 4.f;
-            }
-            item.image.image = [photo thumbnailImage];
-            [_imageListView addSubview:item];
-            [self.thumbnailImageList addObject:item];
-            index++;
-        }
-    }
-    return _imageListView;
+- (NSString *)navigtationTitle {
+    return [NSString stringWithFormat:@"%ld/%ld",self.currentIndex+1,self.list.count];
 }
 
-
+//- (UIView *)imageListView {
+//    if (!_imageListView) {
+//        CGFloat padding  = 20;
+//        CGFloat y        = NavigationBarHeight*2+SCREEN_WIDTH-20;
+//        CGFloat height   = SCREEN_HEIGHT-y;
+//        CGFloat itemSize = SCREEN_WIDTH/3 - 20;
+//        NSInteger index  = 0;
+//        self.thumbnailImageList = [@[] mutableCopy];
+//        _imageListView = [[UIView alloc] initWithFrame:CGRectMake(0, y, SCREEN_WIDTH, height)];
+//        _imageListView.hidden = !(self.list.count > 1);
+//        CGFloat x = 0;
+//        for (TWPhoto *photo in self.list) {
+//            x += itemSize + padding;
+//            if (index == 0) {
+//                x = 10;
+//            }
+//            CGRect rect = CGRectMake(x, (height - itemSize)/2, itemSize, itemSize);;
+//            TWPhotoImageItem *item = [[TWPhotoImageItem alloc] initWithFrame:rect];
+//            if (index == 0) {
+//                item.layer.borderWidth  = 4.f;
+//            }
+//            item.image.image = [photo thumbnailImage];
+//            [_imageListView addSubview:item];
+//            [self.thumbnailImageList addObject:item];
+//            index++;
+//        }
+//    }
+//    return _imageListView;
+//}
+//
+- (UILabel *)titleLabel {
+    if (!_titleLabel) {
+        CGRect rect = CGRectMake((SCREEN_WIDTH-100)/2, 0, 100, 44);
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:rect];
+        titleLabel.text = @"选择图片";
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.textColor = [UIColor whiteColor];
+        titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
+        _titleLabel = titleLabel;
+    }
+    return _titleLabel;
+}
 
 @end

@@ -27,7 +27,7 @@
     self.icon = [[UIImageView alloc] initWithImage:iconImage];
     self.icon.frame = CGRectMake((width-iconWidth)/2, (height-iconHeight)/2, iconWidth, iconHeight);
     self.image = [[UIImageView alloc] initWithFrame:rect];
-    self.image.contentMode = UIViewContentModeScaleAspectFill;
+    self.image.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:self.image];
     [self addSubview:self.iconContent];
     [self.iconContent addSubview:self.icon];

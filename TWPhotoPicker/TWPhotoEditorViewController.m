@@ -33,6 +33,8 @@ static CGFloat const NavigationBarHeight = 64;
 @property (strong, nonatomic) UIButton *nextOrSubmitButton;
 @property (nonatomic, assign) NSInteger currentIndex;
 @property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) CALayer *maskLayer;
+
 @end
 
 @implementation TWPhotoEditorViewController
@@ -220,6 +222,7 @@ static CGFloat const NavigationBarHeight = 64;
         self.imageScrollView.backgroundColor = [UIColor blackColor];
         [self.topView addSubview:self.imageScrollView];
         [self.topView sendSubviewToBack:self.imageScrollView];
+        [self.topView.layer addSublayer:[self maskLayer:rect]];
         CGFloat y = handleHeight+SCREEN_WIDTH;
         UIView *bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, y, SCREEN_WIDTH, SCREEN_HEIGHT-y)];
         bottomView.backgroundColor = [UIColor whiteColor];
@@ -289,18 +292,19 @@ static CGFloat const NavigationBarHeight = 64;
 }
 
 - (void)buttonDidPress:(UIButton *)sender {
-    NSInteger index = sender.tag;
-    NSArray *list = @[self.collectionView];
-    for (UIButton *button in [[sender superview]subviews]) {
-        if ([button isKindOfClass:UIButton.class]) {
-            button.selected = YES;
-        }
-    }
-    sender.selected = NO;
-    for (UIView *view in list) {
-        view.hidden = NO;
-    }
-    [list[index] setHidden:YES];
+    return;
+//    NSInteger index = sender.tag;
+//    NSArray *list = @[self.collectionView];
+//    for (UIButton *button in [[sender superview]subviews]) {
+//        if ([button isKindOfClass:UIButton.class]) {
+//            button.selected = YES;
+//        }
+//    }
+//    sender.selected = NO;
+//    for (UIView *view in list) {
+//        view.hidden = NO;
+//    }
+//    [list[index] setHidden:YES];
 }
 
 
@@ -495,7 +499,7 @@ static CGFloat const NavigationBarHeight = 64;
 //    }
 //    return _imageListView;
 //}
-//
+
 - (UILabel *)titleLabel {
     if (!_titleLabel) {
         CGRect rect = CGRectMake((SCREEN_WIDTH-100)/2, 0, 100, 44);
@@ -510,4 +514,38 @@ static CGFloat const NavigationBarHeight = 64;
     return _titleLabel;
 }
 
+- (CALayer *)maskLayer:(CGRect)frame {
+    if (!_maskLayer) {
+        CALayer *maskLayer = [CALayer layer];
+        maskLayer.bounds   = frame;
+        CGFloat y          = CGRectGetMinY(frame);
+        CGFloat height     = CGRectGetHeight(frame);
+        CGFloat width      = CGRectGetWidth(frame);
+        maskLayer.position = CGPointMake(width/2, height/2+y);
+        for (int i = 0; i < 4; i++) {
+            CAShapeLayer *line = [CAShapeLayer layer];
+            UIBezierPath *linePath=[UIBezierPath bezierPath];
+            CGPoint startPoint,endPoint;
+            CGFloat per = (i%2)*0.33 + 0.33;
+            if (i > 1) {
+                startPoint = CGPointMake(per*width, y);
+                endPoint   = CGPointMake(per*width, height+y);
+            } else {
+                startPoint = CGPointMake(0, per*height+y);
+                endPoint   = CGPointMake(width, per*height+y);
+            }
+            [linePath moveToPoint: startPoint];
+            [linePath addLineToPoint:endPoint];
+            line.path         = linePath.CGPath;
+            line.fillColor    = nil;
+            line.opacity      = 0.7;
+            line.shadowColor  = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5].CGColor;
+            line.shadowRadius = 2;
+            line.strokeColor  = [UIColor whiteColor].CGColor;
+            [maskLayer addSublayer:line];
+        }
+        _maskLayer = maskLayer;
+    }
+    return _maskLayer;
+}
 @end

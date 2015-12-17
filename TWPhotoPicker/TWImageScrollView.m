@@ -29,8 +29,6 @@ static const CGFloat MAX_SIZE = 1500;
 @property (nonatomic, strong) GPUImageWhiteBalanceFilter *whiteBalanceFilter;
 @property (nonatomic, strong) GPUImageSharpenFilter *sharpenFilter;
 @property (nonatomic, strong) GPUImageContrastFilter *contrastFilter;
-
-
 @property (strong, nonatomic) UIImageView *imageView;
 
 @end
@@ -84,14 +82,12 @@ static const CGFloat MAX_SIZE = 1500;
     UIImage *image = [self.imageView image];
     CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
     CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
-    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation] ;
-//    if (cropped.size.width > MAX_SIZE) {
-        CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
-        UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
-        [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
-        cropped = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-//    }
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation];
+    CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
+    UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
+    [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
+    cropped = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
     CGImageRelease(ref);
     ref = NULL;
     return cropped;
@@ -263,7 +259,6 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     [self configureForImageSize:frame.size];
     self.contentSize = CGSizeMake(width, height);
     self.imageView.frame = frame;
-
 }
 
 - (void)configureForImageSize:(CGSize)imageSize {

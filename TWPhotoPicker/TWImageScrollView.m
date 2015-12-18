@@ -82,7 +82,7 @@ static const CGFloat MAX_SIZE = 1500;
     UIImage *image = [self.imageView image];
     CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
     CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
-    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:image.scale orientation:image.imageOrientation];
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:1 orientation:image.imageOrientation];
     CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
     UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
     [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
@@ -95,20 +95,21 @@ static const CGFloat MAX_SIZE = 1500;
 
 static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 {
-    return CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.height * scale);
+    return CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.width * scale);
 }
 
 
 - (CGRect)_calcVisibleRectForCropArea:(CGSize)size {
     CGFloat sizeScale = 1;
-    if (size.height > size.width) {
-        sizeScale = size.width / self.frame.size.width;
-    } else {
-        sizeScale = size.height / self.frame.size.height;
-    }
+//    if (size.height > size.width) {
+//        sizeScale = size.width / self.frame.size.width;
+//    } else {
+    sizeScale = size.height / self.frame.size.height;
+//    }
     
     CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
-    return visibleRect = TWScaleRect(visibleRect, sizeScale);
+    visibleRect = TWScaleRect(visibleRect, sizeScale);
+    return visibleRect;
 }
 
 - (CGAffineTransform)_orientationTransformedRectOfImage:(UIImage *)img
@@ -252,7 +253,7 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
         height = size.height;
         width  = (size.height / image.size.height) * image.size.width;
     }
-    
+    currentFilterType    = 0;
     self.picture         = [[GPUImagePicture alloc] initWithImage:image];
     self.imageView.image = image;
     CGRect frame         = CGRectMake(x, y, width, height);

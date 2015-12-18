@@ -40,7 +40,7 @@
                     _width = image.size.width;
                 }
                 NSData *imgData = UIImageJPEGRepresentation(image, 1.0);
-                NSLog(@"Size of Image:%f KB",(double)[imgData length]/1000);
+                NSLog(@"Size of Image:%f MB",(double)[imgData length]/1048576);
                 NSLog(@"%@",image);
                 index++;
             }

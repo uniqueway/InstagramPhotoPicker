@@ -79,37 +79,36 @@ static const CGFloat MAX_SIZE = 1500;
  *  @return image cropped
  */
 - (UIImage *)capture {
-    UIImage *image = [self.imageView image];
-    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
-    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
-    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:1 orientation:image.imageOrientation];
+    
+    CGRect visibleRect = [self _calcVisibleRectForCropArea];//caculate visible rect for crop
+    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:self.imageView.image];//if need rotate caculate
+    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
+    
+    CGImageRef ref = CGImageCreateWithImageInRect([self.imageView.image CGImage], visibleRect);//crop
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:self.imageView.image.scale orientation:self.imageView.image.imageOrientation] ;
     CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
     UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
     [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
     cropped = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+
     CGImageRelease(ref);
     ref = NULL;
     return cropped;
 }
 
+
 static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 {
-    return CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.width * scale);
+    return CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.height * scale);
 }
 
 
-- (CGRect)_calcVisibleRectForCropArea:(CGSize)size {
-    CGFloat sizeScale = 1;
-//    if (size.height > size.width) {
-//        sizeScale = size.width / self.frame.size.width;
-//    } else {
-    sizeScale = size.height / self.frame.size.height;
-//    }
+-(CGRect)_calcVisibleRectForCropArea{
     
+    CGFloat sizeScale = self.imageView.image.size.width / self.imageView.frame.size.width;
+    sizeScale *= self.zoomScale;
     CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
-    visibleRect = TWScaleRect(visibleRect, sizeScale);
-    return visibleRect;
+    return visibleRect = TWScaleRect(visibleRect, sizeScale);
 }
 
 - (CGAffineTransform)_orientationTransformedRectOfImage:(UIImage *)img
@@ -132,6 +131,60 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     
     return CGAffineTransformScale(rectTransform, img.scale, img.scale);
 }
+//- (UIImage *)capture {
+//    UIImage *image = [self.imageView image];
+//    CGRect visibleRect = [self _calcVisibleRectForCropArea:image.size];//caculate visible rect for crop
+//    CGImageRef ref = CGImageCreateWithImageInRect([image CGImage], visibleRect);//crop
+//    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:1 orientation:image.imageOrientation];
+//    CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
+//    UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
+//    [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
+//    cropped = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    CGImageRelease(ref);
+//    ref = NULL;
+//    return cropped;
+//}
+//
+//static CGRect TWScaleRect(CGRect rect, CGFloat scale)
+//{
+//    return CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.width * scale);
+//}
+//
+//
+//- (CGRect)_calcVisibleRectForCropArea:(CGSize)size {
+//    CGFloat sizeScale = 1;
+//    if (size.height > size.width) {
+//        sizeScale = size.width / self.frame.size.width;
+//    } else {
+//        sizeScale = size.height / self.frame.size.height;
+//    }
+//    sizeScale *= self.zoomScale;
+//    CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
+//    visibleRect = TWScaleRect(visibleRect, sizeScale);
+//    return visibleRect;
+//}
+//
+//- (CGAffineTransform)_orientationTransformedRectOfImage:(UIImage *)img
+//{
+//    CGAffineTransform rectTransform;
+//    switch (img.imageOrientation)
+//    {
+//        case UIImageOrientationLeft:
+//            rectTransform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(rad(90)), 0, -img.size.height);
+//            break;
+//        case UIImageOrientationRight:
+//            rectTransform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(rad(-90)), -img.size.width, 0);
+//            break;
+//        case UIImageOrientationDown:
+//            rectTransform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(rad(-180)), -img.size.width, -img.size.height);
+//            break;
+//        default:
+//            rectTransform = CGAffineTransformIdentity;
+//    };
+//    
+//    return CGAffineTransformScale(rectTransform, img.scale, img.scale);
+//}
 
 #pragma mark - Switch Filter
 

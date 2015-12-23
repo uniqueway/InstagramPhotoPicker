@@ -14,7 +14,7 @@
 
 #define NavigationBarHeight 64
 
-static NSInteger MAX_SELECTION_COUNT = 10;
+static NSInteger MAX_SELECTION_COUNT = 3;
 
 @interface TWPhotoPickerController ()<UICollectionViewDataSource, UICollectionViewDelegate> {
     CGFloat beginOriginY;

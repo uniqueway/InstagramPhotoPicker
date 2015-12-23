@@ -134,25 +134,22 @@ static CGFloat const NavigationBarHeight = 64;
     __weak __typeof__(self) weakSelf = self;
     NSInteger index = self.currentIndex;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *image = weakSelf.imageScrollView.capture;
+        __block UIImage *image = weakSelf.imageScrollView.capture;
         TWPhoto *photo = weakSelf.list[index];
         NSURL *url = photo.asset.defaultRepresentation.url;
         if (!url) {
             url = [NSURL URLWithString:@""];
         }
-        NSDictionary *dict = @{
-                               @"image" : image,
-                               @"url"   : url
-                               };
-//        weakSelf.resultList[index] = dict;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.cropBlock) {
-                weakSelf.cropBlock(@[dict]);
+                weakSelf.cropBlock(@[@{@"image":image,@"url": url}]);
             }
             if (isLast) {
+                weakSelf.list = nil;
                 [self dismissViewControllerAnimated:YES completion:NULL];
                 [SVProgressHUD dismiss];
             }
+            image = nil;
         });
 
     });

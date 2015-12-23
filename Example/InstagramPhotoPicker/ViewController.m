@@ -20,7 +20,7 @@
     [super viewDidLoad];
     UIScrollView *v = [[UIScrollView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:v];
-    NSMutableArray *imageList = [@[] mutableCopy];
+//    NSMutableArray *imageList = [@[] mutableCopy];
     __block CGFloat y = 50;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         TWPhotoPickerController *photoPicker = [[TWPhotoPickerController alloc] init];
@@ -43,8 +43,10 @@
                 NSLog(@"Size of Image:%f MB",(double)[imgData length]/1048576);
                 NSLog(@"%@",image);
                 index++;
+                image = nil;
             }
             v.contentSize = (CGSize){_width+1,y};
+            list = nil;
         };
         
         UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:photoPicker];

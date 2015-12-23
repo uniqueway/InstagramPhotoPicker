@@ -324,6 +324,8 @@
 		DFDFF6986EEE135F82ECE359032DAD14 /* GPUImageUnsharpMaskFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E6D428493844D8636185C1C8217C24F6 /* GPUImageUnsharpMaskFilter.h */; };
 		E00BB8421C16CAD3003D806E /* TWPhotoImageItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E00BB8401C16CAD3003D806E /* TWPhotoImageItem.h */; };
 		E00BB8431C16CAD3003D806E /* TWPhotoImageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E00BB8411C16CAD3003D806E /* TWPhotoImageItem.m */; };
+		E01162301C2A50F200C445A8 /* UIImage+Resize.h in Headers */ = {isa = PBXBuildFile; fileRef = E011622E1C2A50F200C445A8 /* UIImage+Resize.h */; };
+		E01162311C2A50F200C445A8 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = E011622F1C2A50F200C445A8 /* UIImage+Resize.m */; };
 		E0932DE3DF95E3D44B1339B2EA995838 /* GPUImageBulgeDistortionFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 108C970718ADB5DC73D4BD9F221C4A2C /* GPUImageBulgeDistortionFilter.h */; };
 		E0C5E0374AFBEE94A81AFF7EFBFF5B4F /* GPUImageTwoInputFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CB3BEC3A6AC6A4E037717D84204AEB /* GPUImageTwoInputFilter.h */; };
 		E1417771F840A68B4C2B5A0028130391 /* GPUImageParallelCoordinateLineTransformFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = AD466574AD87C9E747249717D0DE54F6 /* GPUImageParallelCoordinateLineTransformFilter.h */; };
@@ -751,6 +753,8 @@
 		DF35D6273642AB28C8C2E028D91540B1 /* GPUImageDirectionalNonMaximumSuppressionFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageDirectionalNonMaximumSuppressionFilter.h; path = framework/Source/GPUImageDirectionalNonMaximumSuppressionFilter.h; sourceTree = "<group>"; };
 		E00BB8401C16CAD3003D806E /* TWPhotoImageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWPhotoImageItem.h; sourceTree = "<group>"; };
 		E00BB8411C16CAD3003D806E /* TWPhotoImageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWPhotoImageItem.m; sourceTree = "<group>"; };
+		E011622E1C2A50F200C445A8 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Resize.h"; sourceTree = "<group>"; };
+		E011622F1C2A50F200C445A8 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resize.m"; sourceTree = "<group>"; };
 		E0394C4CF647A946A481E0A236793423 /* GPUImageDirectionalSobelEdgeDetectionFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPUImageDirectionalSobelEdgeDetectionFilter.h; path = framework/Source/GPUImageDirectionalSobelEdgeDetectionFilter.h; sourceTree = "<group>"; };
 		E07D1B8B1C0846430002295A /* earlybird.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earlybird.jpg; sourceTree = "<group>"; };
 		E07D1B8C1C0846430002295A /* hudson.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = hudson.jpg; sourceTree = "<group>"; };
@@ -1029,6 +1033,8 @@
 		D1E203D1D082F4E9D7B3C481A6DAD9B2 /* TWPhotoPicker */ = {
 			isa = PBXGroup;
 			children = (
+				E011622E1C2A50F200C445A8 /* UIImage+Resize.h */,
+				E011622F1C2A50F200C445A8 /* UIImage+Resize.m */,
 				AAE4C4E7F6267BC7353183C7147F93B0 /* TWImageScrollView.h */,
 				4BC0D53B7BB732B4343D9D5A3E8DD2D2 /* TWImageScrollView.m */,
 				B1E3D5C0DE99511DDAF1D4EB64109412 /* TWPhoto.h */,
@@ -1578,6 +1584,7 @@
 				9AF999E28883371DB36E7D34191D2104 /* GPUImageRawDataOutput.h in Headers */,
 				429F25F673C16334F82F82C73995ACFB /* GPUImageSaturationBlendFilter.h in Headers */,
 				7A6431B9E6C4DCF499FE59849B690B84 /* GPUImageSaturationFilter.h in Headers */,
+				E01162301C2A50F200C445A8 /* UIImage+Resize.h in Headers */,
 				227984C862229589E390E594FE70A496 /* GPUImageScreenBlendFilter.h in Headers */,
 				8B56E497F9615E1E0D278F3905A2B471 /* GPUImageSepiaFilter.h in Headers */,
 				5F764C0B79002C189FD20EABBC2E135E /* GPUImageSharpenFilter.h in Headers */,
@@ -1786,6 +1793,7 @@
 				50BB1EC619469C3C59157F2D3914E221 /* GPUImageClosingFilter.m in Sources */,
 				4C79CBF46DB791030FCD63AC333BA50F /* GPUImageColorBlendFilter.m in Sources */,
 				D99176C429AC09DE1C73EC5DB0E90D0A /* GPUImageColorBurnBlendFilter.m in Sources */,
+				E01162311C2A50F200C445A8 /* UIImage+Resize.m in Sources */,
 				08EE7A0AD572060A442FC8E28E4CC1E9 /* GPUImageColorDodgeBlendFilter.m in Sources */,
 				10599DF1D2717DEB15DF029D52F4A082 /* GPUImageColorInvertFilter.m in Sources */,
 				6985533194BAFC1D17C20DA94E5A81C8 /* GPUImageColorMatrixFilter.m in Sources */,

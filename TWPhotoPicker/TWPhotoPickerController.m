@@ -14,6 +14,8 @@
 
 #define NavigationBarHeight 64
 
+static NSInteger MAX_SELECTION_COUNT = 10;
+
 @interface TWPhotoPickerController ()<UICollectionViewDataSource, UICollectionViewDelegate> {
     CGFloat beginOriginY;
 }
@@ -55,8 +57,8 @@
         [self.collectionView reloadData];
         return;
     }
-    if (self.imageDidSelectList.count >= 3) {
-        [SVProgressHUD showErrorWithStatus:@"最多选择三个"];
+    if (self.imageDidSelectList.count >= MAX_SELECTION_COUNT) {
+        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"最多选择%lu个",MAX_SELECTION_COUNT]];
         [self.collectionView reloadData];
         return;
     }

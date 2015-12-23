@@ -8,6 +8,7 @@
 
 #import "TWImageScrollView.h"
 #import <GPUImage/GPUImage.h>
+#import "UIImage+Resize.h"
 
 #define rad(angle) ((angle) / 180.0 * M_PI)
 static const CGFloat MAX_SIZE = 1500;
@@ -79,20 +80,19 @@ static const CGFloat MAX_SIZE = 1500;
  *  @return image cropped
  */
 - (UIImage *)capture {
-    
     CGRect visibleRect = [self _calcVisibleRectForCropArea];//caculate visible rect for crop
     CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:self.imageView.image];//if need rotate caculate
     visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
-    
     CGImageRef ref = CGImageCreateWithImageInRect([self.imageView.image CGImage], visibleRect);//crop
     UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:self.imageView.image.scale orientation:self.imageView.image.imageOrientation] ;
     CGSize maxSize = CGSizeMake(MAX_SIZE, MAX_SIZE);
-    UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
-    [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
-    cropped = UIGraphicsGetImageFromCurrentImageContext();
-
     CGImageRelease(ref);
     ref = NULL;
+//    UIGraphicsBeginImageContextWithOptions(maxSize, NO, 0.0);
+//    [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
+//    cropped = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+    cropped = [cropped resizedImageToSize:maxSize];
     return cropped;
 }
 
@@ -253,6 +253,7 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
             } else {
                 image = self.currentImage;
             }
+            self.imageView.image = nil;
             self.imageView.image = image;
         });
     });
@@ -308,6 +309,7 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     }
     currentFilterType    = 0;
     self.picture         = [[GPUImagePicture alloc] initWithImage:image];
+    self.imageView.image = nil;
     self.imageView.image = image;
     CGRect frame         = CGRectMake(x, y, width, height);
     [self configureForImageSize:frame.size];

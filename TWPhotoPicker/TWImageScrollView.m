@@ -92,7 +92,7 @@ static const CGFloat MAX_SIZE = 1500;
 //    [cropped drawInRect:CGRectMake(0, 0, MAX_SIZE,MAX_SIZE)];
 //    cropped = UIGraphicsGetImageFromCurrentImageContext();
 //    UIGraphicsEndImageContext();
-    cropped = [cropped resizedImageToSize:maxSize];
+//    cropped = [cropped resizedImageToSize:maxSize];
     return cropped;
 }
 

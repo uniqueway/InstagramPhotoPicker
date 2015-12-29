@@ -88,7 +88,11 @@ static CGFloat const NavigationBarHeight = 64;
 #pragma mark - UICollectionViewDelegate
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    self.currentType = [self.filterList[indexPath.row] integerValue];
+    NSInteger newType = [self.filterList[indexPath.row] integerValue];
+    if (newType != self.currentType) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:TWPhotoEditorViewControllerNotification object:nil];
+    }
+    self.currentType  = newType;
     [self.imageScrollView switchFilter:self.currentType];
     [self.collectionView reloadData];
     if (indexPath.row != 0) {

@@ -25,7 +25,6 @@ static NSInteger MAX_SELECTION_COUNT = 3;
 @property (strong, nonatomic) NSMutableArray *imageDidSelectList;
 @property (strong, nonatomic) NSMutableArray *indexPathList;
 @property (strong, nonatomic) UIButton *cropBtn;
-
 @property (strong, nonatomic) NSArray *allPhotos;
 @end
 

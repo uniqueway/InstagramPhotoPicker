@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+static NSString * const TWPhotoEditorViewControllerNotification = @"TWPhotoEditorViewControllerNotification";
+
 typedef void(^cropBlock)(NSArray *list);
 @interface TWPhotoEditorViewController : UIViewController
 

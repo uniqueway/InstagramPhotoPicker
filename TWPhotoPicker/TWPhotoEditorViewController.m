@@ -146,6 +146,9 @@ static CGFloat const NavigationBarHeight = 64;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.cropBlock) {
+                if (self.currentType != 0) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:TWPhotoEditorUploadEditedImageNotification object:nil];
+                }
                 weakSelf.cropBlock(@[@{@"image":image,@"url": url}]);
             }
             if (isLast) {

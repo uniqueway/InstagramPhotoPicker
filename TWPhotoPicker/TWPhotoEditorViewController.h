@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 static NSString * const TWPhotoEditorViewControllerNotification = @"TWPhotoEditorViewControllerNotification";
+static NSString * const TWPhotoEditorUploadEditedImageNotification = @"TWPhotoEditorUploadEditedImageNotification";
 
 typedef void(^cropBlock)(NSArray *list);
 @interface TWPhotoEditorViewController : UIViewController

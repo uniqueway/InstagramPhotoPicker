@@ -311,6 +311,7 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
     [self configureForImageSize:frame.size];
     self.contentSize = CGSizeMake(width, height);
     self.imageView.frame = frame;
+    [self.scrollDelegate contentDidEdit:NO];
 }
 
 - (void)configureForImageSize:(CGSize)imageSize {
@@ -333,6 +334,13 @@ static CGRect TWScaleRect(CGRect rect, CGFloat scale)
 
 #pragma mark - UIScrollViewDelegate
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [self.scrollDelegate contentDidEdit:YES];
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    [self.scrollDelegate contentDidEdit:YES];
+}
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     return self.imageView;

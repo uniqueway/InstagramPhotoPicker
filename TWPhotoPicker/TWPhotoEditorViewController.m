@@ -19,12 +19,13 @@
 #define SCREEN_HEIGHT CGRectGetHeight([UIScreen mainScreen].bounds)
 static CGFloat const NavigationBarHeight = 64;
 
-@interface TWPhotoEditorViewController()<UICollectionViewDataSource, UICollectionViewDelegate>
+@interface TWPhotoEditorViewController()<UICollectionViewDataSource, UICollectionViewDelegate,TWImageScrollViewDelegate>
 @property (nonatomic, strong) NSMutableArray *list;
 @property (nonatomic, strong) NSMutableArray *thumbnailImageList;
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UICollectionView *collectionView;
 //@property (strong, nonatomic) UIView *imageListView;
+@property (nonatomic, assign) BOOL isEdited;
 @property (strong, nonatomic) TWImageScrollView *imageScrollView;
 @property (nonatomic, assign) NSInteger currentType;
 @property (nonatomic, strong) NSArray *filterList;
@@ -39,7 +40,6 @@ static CGFloat const NavigationBarHeight = 64;
 
 @implementation TWPhotoEditorViewController
 - (id)initWithPhotoList:(NSArray *)list crop:(cropBlock)crop {
-    
     self              = [super init];
     self.currentType  = 0;
     self.cropBlock    = crop;
@@ -68,6 +68,13 @@ static CGFloat const NavigationBarHeight = 64;
     }
 
 }
+
+#pragma mark - TWImageScrollViewDelegate
+- (void)contentDidEdit:(BOOL)flag {
+    self.isEdited = flag;
+}
+
+
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -88,6 +95,7 @@ static CGFloat const NavigationBarHeight = 64;
 #pragma mark - UICollectionViewDelegate
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    self.isEdited = YES;
     NSInteger newType = [self.filterList[indexPath.row] integerValue];
     if (newType != self.currentType) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TWPhotoEditorViewControllerNotification object:nil];
@@ -138,7 +146,14 @@ static CGFloat const NavigationBarHeight = 64;
     __weak __typeof__(self) weakSelf = self;
     NSInteger index = self.currentIndex;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        __block UIImage *image = weakSelf.imageScrollView.capture;
+        __block UIImage *image = nil;
+        if (self.isEdited) {
+            image = weakSelf.imageScrollView.capture;
+        } else {
+            TWPhoto *photo = self.list[self.currentIndex];
+            image = photo.originalImage;
+        }
+        self.isEdited = NO;
         TWPhoto *photo = weakSelf.list[index];
         NSURL *url = photo.asset.defaultRepresentation.url;
         if (!url) {
@@ -224,6 +239,7 @@ static CGFloat const NavigationBarHeight = 64;
         rect = CGRectMake(0, handleHeight, SCREEN_WIDTH, SCREEN_WIDTH);
         self.imageScrollView = [[TWImageScrollView alloc] initWithFrame:rect];
         self.imageScrollView.backgroundColor = [UIColor blackColor];
+        self.imageScrollView.scrollDelegate  = self;
         [self.topView addSubview:self.imageScrollView];
         [self.topView sendSubviewToBack:self.imageScrollView];
         [self.topView.layer addSublayer:[self maskLayer:rect]];

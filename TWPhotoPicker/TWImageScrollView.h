@@ -11,10 +11,15 @@
 //#import "IFImageFilter.h"
 //#import "InstaFilters.h"
 
+@protocol TWImageScrollViewDelegate <NSObject>
+- (void)contentDidEdit:(BOOL)flag;
+@end
 
 @interface TWImageScrollView : UIScrollView
-- (void)displayImage:(UIImage *)image;
 
+@property (nonatomic, weak) id<TWImageScrollViewDelegate> scrollDelegate;
+
+- (void)displayImage:(UIImage *)image;
 - (UIImage *)capture;
 
 - (void)switchFilter:(NSInteger)type;

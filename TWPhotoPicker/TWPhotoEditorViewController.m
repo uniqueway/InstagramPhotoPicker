@@ -146,14 +146,7 @@ static CGFloat const NavigationBarHeight = 64;
     __weak __typeof__(self) weakSelf = self;
     NSInteger index = self.currentIndex;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        __block UIImage *image = nil;
-        if (self.isEdited) {
-            image = weakSelf.imageScrollView.capture;
-        } else {
-            TWPhoto *photo = self.list[self.currentIndex];
-            image = photo.originalImage;
-        }
-        self.isEdited = NO;
+        __block UIImage *image = weakSelf.imageScrollView.capture;
         TWPhoto *photo = weakSelf.list[index];
         NSURL *url = photo.asset.defaultRepresentation.url;
         if (!url) {

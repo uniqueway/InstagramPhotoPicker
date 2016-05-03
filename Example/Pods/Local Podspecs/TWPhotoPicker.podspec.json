@@ -28,7 +28,6 @@
   ],
   "resources": [
     "TWPhotoPicker/Resources/*",
-    "TWPhotoPicker/instagramFilter/filterIcon/*",
-    "TWPhotoPicker/instagramFilter/Resources_for_IF_Filters/*"
+    "TWPhotoPicker/instagramFilter/filterIcon/*"
   ]
 }

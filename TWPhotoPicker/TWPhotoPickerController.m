@@ -110,7 +110,9 @@ static NSInteger MAX_SELECTION_COUNT = 3;
         TWPhotoEditorViewController *view = [[TWPhotoEditorViewController alloc] initWithPhotoList:self.imageDidSelectList crop:self.cropBlock];
         [self.navigationController pushViewController:view animated:YES];
     }else {
-        [SVProgressHUD showWithStatus:@"请选择照片"];
+        [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeGradient];
+        [SVProgressHUD setMinimumDismissTimeInterval:1.2];
+        [SVProgressHUD showInfoWithStatus:@"请选择照片"];
         
     }
     

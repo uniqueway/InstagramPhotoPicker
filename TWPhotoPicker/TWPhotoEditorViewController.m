@@ -74,7 +74,6 @@ static CGFloat const NavigationBarHeight = 64;
     self.isEdited = flag;
 }
 
-
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -116,11 +115,11 @@ static CGFloat const NavigationBarHeight = 64;
 #pragma mark - Helper
 - (void)loadCurrentImage {
     TWPhoto *photo = self.list[self.currentIndex];
-    
-    [self.imageScrollView displayImage:photo.originalImage];
-    self.currentType  = 0;
-//    [self.imageScrollView.videoCamera switchFilter:self.currentType];
-    [self.collectionView reloadData];
+    [photo loadPortraitImageCompletion:^(TWPhoto *photo) {
+        [self.imageScrollView displayImage:photo.originalImage];
+        self.currentType  = 0;
+        [self.collectionView reloadData];
+    }];
 }
 
 
@@ -148,16 +147,13 @@ static CGFloat const NavigationBarHeight = 64;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         __block UIImage *image = weakSelf.imageScrollView.capture;
         TWPhoto *photo = weakSelf.list[index];
-        NSURL *url = photo.asset.defaultRepresentation.url;
-        if (!url) {
-            url = [NSURL URLWithString:@""];
-        }
+        NSString *url = photo.asset.localIdentifier;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.cropBlock) {
                 if (self.currentType != 0) {
                     [[NSNotificationCenter defaultCenter] postNotificationName:TWPhotoEditorUploadEditedImageNotification object:nil];
                 }
-                weakSelf.cropBlock(@[@{@"image":image,@"url": url}]);
+                weakSelf.cropBlock(@[@{@"image":image,@"localIdentifier": url}]);
             }
             if (isLast) {
                 weakSelf.list = nil;

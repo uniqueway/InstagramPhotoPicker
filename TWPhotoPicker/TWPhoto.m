@@ -8,38 +8,62 @@
 
 #import "TWPhoto.h"
 
-static NSString * const IMAGE_SAVE_PATH = @"UNWIMAGE";
+
 
 @implementation TWPhoto
 
-- (UIImage *)thumbnailImage {
-    if (!_thumbnailImage) {
-        if (self.asset) {
-            _thumbnailImage = [UIImage imageWithCGImage:self.asset.thumbnail];
-        } else {
-            _thumbnailImage = [UIImage imageWithContentsOfFile:[self localPath:[NSString stringWithFormat:@"%@!s270",self.imageName]]];
+- (void)loadThumbnailImageCompletion:(void (^)(TWPhoto *))completion {
+    if (self.thumbnailImage) {
+        if (completion) {
+            completion(self);
         }
+    }else {
+        CGFloat colum = 4.0, spacing = 2.0;
+        CGFloat value = floorf(([self screenSize].width - (colum - 1) * spacing) / colum);
+        [self loadImageWithAsset:self.asset targetSize:CGSizeMake(value, value) completion:^(UIImage *result) {
+            self.thumbnailImage = result;
+            if (completion) {
+                completion(self);
+            }
+        }];
     }
-    return _thumbnailImage;
 }
 
-- (NSString *)localPath:(NSString *)imageName {
-    NSArray *path          = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentPath = [path objectAtIndex:0];
-    NSString *imageDocPath = [documentPath stringByAppendingPathComponent:IMAGE_SAVE_PATH];
-    return [[imageDocPath stringByAppendingString:@"/"] stringByAppendingString:imageName];
+- (void)loadPortraitImageCompletion:(void (^)(TWPhoto *))completion {
+    if (self.originalImage) {
+        if (completion) {
+            completion(self);
+        }
+    }else {
+        CGFloat scale = [UIScreen mainScreen].scale;
+        CGSize size = CGSizeMake([self screenSize].width * scale, [self screenSize].height * scale);
+        [self loadImageWithAsset:self.asset targetSize:size completion:^(UIImage *result) {
+            self.originalImage = result;
+            if (completion) {
+                completion(self);
+            }
+        }];
+    }
 }
 
-- (UIImage *)originalImage {
-    if (!_originalImage) {
-        if (self.asset) {
-            _originalImage = [UIImage imageWithCGImage:self.asset.defaultRepresentation.fullResolutionImage
-                                                 scale:self.asset.defaultRepresentation.scale
-                                           orientation:(UIImageOrientation)self.asset.defaultRepresentation.orientation];
-        } else {
-            _originalImage = [UIImage imageWithContentsOfFile:[self localPath:[NSString stringWithFormat:@"%@.jpg",self.imageName]]];
-        }
-    }
-    return _originalImage;
+- (void)loadImageWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize completion:(void(^)(UIImage *result))completion{
+    PHImageManager *imageManager = [PHImageManager defaultManager];
+    PHImageRequestOptions *options = [PHImageRequestOptions new];
+    options.networkAccessAllowed = YES;
+    options.resizeMode =  PHImageRequestOptionsResizeModeFast;
+    options.deliveryMode =  PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    options.synchronous = NO;
+    [imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFill options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) {
+                completion(result);
+            }
+        });
+    }];
 }
+
+- (CGSize)screenSize {
+    return [UIScreen mainScreen].bounds.size;
+}
+
 @end

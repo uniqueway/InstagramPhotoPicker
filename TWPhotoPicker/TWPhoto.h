@@ -1,13 +1,16 @@
 
 
 #import <UIKit/UIKit.h>
-#import <AssetsLibrary/AssetsLibrary.h>
+#import <Photos/Photos.h>
 
 @interface TWPhoto : NSObject
 
 @property (nonatomic, strong) UIImage *thumbnailImage;
 @property (nonatomic, strong) UIImage *originalImage;
-@property (nonatomic, strong) NSString *imageName;
-@property (nonatomic, strong) ALAsset *asset;
+@property (nonatomic, strong) PHAsset *asset;
+
+- (void)loadThumbnailImageCompletion:( void(^)(TWPhoto *photo) )completion;
+- (void)loadPortraitImageCompletion:( void(^)(TWPhoto *photo) )completion;
+
 
 @end

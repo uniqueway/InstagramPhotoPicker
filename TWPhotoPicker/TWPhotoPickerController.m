@@ -76,7 +76,7 @@ static NSInteger MAX_SELECTION_COUNT = 3;
     static NSString *CellIdentifier = @"TWPhotoCollectionViewCell";
     TWPhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
     TWPhoto *photo = [self.allPhotos objectAtIndex:indexPath.row];
-    cell.imageView.image = photo.thumbnailImage;
+    cell.photoModel = photo;
     cell.selected = ([self.indexPathList containsObject:indexPath]);
     return cell;
 }

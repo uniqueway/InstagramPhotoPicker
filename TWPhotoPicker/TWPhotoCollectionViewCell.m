@@ -11,6 +11,15 @@
 #define DEFAULT_COLOR [UIColor clearColor]
 #define SELECTED_COLOR [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]
 
+@interface TWPhotoCollectionViewCell ()
+
+@property (strong, nonatomic) UIImageView *imageView;
+@property (nonatomic, strong) UIView *coverView;
+@property (nonatomic, strong) UIImageView *icon;
+
+
+@end
+
 @implementation TWPhotoCollectionViewCell
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -48,4 +57,13 @@
     self.coverView.backgroundColor = selected ? SELECTED_COLOR : DEFAULT_COLOR;
 }
 
+- (void)setPhotoModel:(TWPhoto *)photoModel {
+    _photoModel = photoModel;
+    __weak __typeof__(self) weakSelf = self;
+    [_photoModel loadThumbnailImageCompletion:^(TWPhoto *photo) {
+        if (photo == weakSelf.photoModel) {
+            weakSelf.imageView.image = weakSelf.photoModel.thumbnailImage;
+        }
+    }];
+}
 @end

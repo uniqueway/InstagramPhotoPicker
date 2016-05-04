@@ -36,7 +36,7 @@
         }
     }else {
         CGFloat scale = [UIScreen mainScreen].scale;
-        CGSize size = CGSizeMake([self screenSize].width * scale, [self screenSize].height * scale);
+        CGSize size = CGSizeMake(1500, 1500);
         [self loadImageWithAsset:self.asset targetSize:size completion:^(UIImage *result) {
             self.originalImage = result;
             if (completion) {

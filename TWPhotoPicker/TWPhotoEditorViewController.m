@@ -115,6 +115,7 @@ static CGFloat const NavigationBarHeight = 64;
 #pragma mark - Helper
 - (void)loadCurrentImage {
     TWPhoto *photo = self.list[self.currentIndex];
+    [self.imageScrollView displayImage:photo.thumbnailImage];
     [photo loadPortraitImageCompletion:^(TWPhoto *photo) {
         [self.imageScrollView displayImage:photo.originalImage];
         self.currentType  = 0;

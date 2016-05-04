@@ -24,6 +24,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        self.clipsToBounds = YES;
         self.imageView = [[UIImageView alloc] initWithFrame:self.bounds];
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         self.imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

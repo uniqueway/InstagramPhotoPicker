@@ -115,7 +115,6 @@ static CGFloat const NavigationBarHeight = 64;
 #pragma mark - Helper
 - (void)loadCurrentImage {
     TWPhoto *photo = self.list[self.currentIndex];
-    [self.imageScrollView displayImage:photo.thumbnailImage];
     [photo loadPortraitImageCompletion:^(TWPhoto *photo) {
         [self.imageScrollView displayImage:photo.originalImage];
         self.currentType  = 0;
@@ -150,7 +149,7 @@ static CGFloat const NavigationBarHeight = 64;
         TWPhoto *photo = weakSelf.list[index];
         NSString *url = photo.asset.localIdentifier;
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.cropBlock) {
+            if (self.cropBlock && image && url) {
                 if (self.currentType != 0) {
                     [[NSNotificationCenter defaultCenter] postNotificationName:TWPhotoEditorUploadEditedImageNotification object:nil];
                 }
